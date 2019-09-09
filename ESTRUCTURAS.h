@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <sstream>
+#include <fstream>
 #include <string>
 
 /**LISTA DE FILAS DE CABECERAS**/
@@ -59,6 +59,7 @@ struct cubo
 {
     // datos del cubo
     std::string nombre = "";
+    std::string ruta = "";
     int wImg = 0, hImg = 0;
     int wPix = 0, hPix = 0;
     // enlace a la primera capa
@@ -82,7 +83,7 @@ typedef struct cubo* ARBOL;
 
 
 /************************************************/
-
+void graficarExtra(ARBOL raiz, std::string* dotArchivo);
 
 /**MÉTODOS PARA EL MANEJO DE ARBOL DE LOS CUBOS**/
 void insertar(ARBOL &arbol, ARBOL nuevoCubo)
@@ -108,6 +109,7 @@ void insertar(ARBOL &arbol, ARBOL nuevoCubo)
         insertar(arbol->der_Cubo, nuevoCubo);
     }
 }
+
 void desplegarImagenes(ARBOL raizArbol)
 {
     // In Order
@@ -118,22 +120,51 @@ void desplegarImagenes(ARBOL raizArbol)
         desplegarImagenes(raizArbol->der_Cubo);
     }
 }
+
 ARBOL obtenerCopia(ARBOL &raiz, std::string nombre){
-
     ARBOL temporal = 0;
-
-    if(nombre.compare(raiz->nombre) < 0){
-        obtenerCopia(raiz->izq_Cubo, nombre);
-    }else if(nombre.compare(raiz->nombre) > 0){
-        obtenerCopia(raiz->der_Cubo, nombre);
-    }else if(raiz->nombre == nombre){
+    if(raiz == NULL) return temporal;
+    if(raiz->nombre.compare(nombre) == 0){
         temporal = raiz;
+        return temporal;
+    }
+    if(raiz->izq_Cubo != NULL){
+        temporal = obtenerCopia(raiz->izq_Cubo, nombre);
+        if (temporal != NULL) return temporal;
+    }
+    if(raiz->der_Cubo != NULL){
+        temporal = obtenerCopia(raiz->der_Cubo, nombre);
+        if (temporal != NULL) return temporal;
     }
     return temporal;
 }
 
 void graficar_arbol_General(ARBOL raizArbol){
+    std::string dot = "digraph G{\n\n node [shape = ellipse, height = 0.1];\n splines=\"line\";\n\n";
+    graficarExtra(raizArbol, &dot);
+    dot += "}";
+    // Alli iría la ruta donde se encuentra el cubo para generar allí todas las imágenes X necesarias.
+    // para los repotes.
+    std::ofstream archivoDOT("archivo.dot");
+    archivoDOT << dot << std::endl;
+    archivoDOT.close();
+    system("dot -Tpng archivo.dot -o Arbol_Cubos.png");
+    //system("nohup display \\graphviz_result\\Arbol_Cubos.png &" );
+}
 
+void graficarExtra(ARBOL raiz, std::string* dotArchivo){
+    if(raiz != NULL){
+        *dotArchivo += "nodo" + raiz->nombre + "[label = \" <f2>|<f1> " + raiz->nombre + " |<f0> \"];\n";
+        graficarExtra(raiz->izq_Cubo, dotArchivo);
+        graficarExtra(raiz->der_Cubo, dotArchivo);
+
+        if (raiz->izq_Cubo != NULL){
+            *dotArchivo += "\"nodo" + raiz->nombre + "\":f2 -> \"nodo" + raiz->izq_Cubo->nombre + "\":f1;\n";
+        }
+        if(raiz->der_Cubo != NULL){
+            *dotArchivo += "\"nodo" + raiz->nombre + "\":f0 -> \"nodo" + raiz->der_Cubo->nombre + "\":f1;\n";
+        }
+    }
 }
 
 void graficar_arbol_PreOrder(ARBOL raizArbol){

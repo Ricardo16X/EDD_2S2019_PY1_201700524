@@ -39,6 +39,7 @@ ARBOL leerArchivo(std::string ruta)
                 /*Eso me dice que es el primer archivo, por lo tanto es el de
                 configuración*/
                 nuevaImagen->nombre = ruta;
+                nuevaImagen->ruta = "csv\\" + ruta + "\\";
                 rutaInit = "csv\\" + ruta + "\\" + file;
                 cargarConfig(rutaInit, nuevaImagen);
             }

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <windows.h>
 
 #include "ESTRUCTURAS.h"
 #include "manejo_CSV.h"
@@ -38,45 +39,50 @@ int main(int argc, char const *argv[]) {
                nuevoElemento = leerArchivo(nombreArchivo.substr(0,nombreArchivo.length() - 4));
                /*Ya que en el paso anterior tengo el nuevo cubo recien creado,
                procederé a almacenarlo en el arbol*/
-               if(nuevoElemento != NULL){
-                    insertar(raiz, nuevoElemento);
-               }else{
-                    std::cout << "No he encontrado ninguna carpeta/archivo.csv con el nombre " << nombreArchivo;
-                    std::cout << std::endl;
+               if(nuevoElemento != NULL) {
+                  insertar(raiz, nuevoElemento);
+               } else {
+                  std::cout << "No he encontrado ninguna carpeta/archivo.csv con el nombre " << nombreArchivo;
+                  std::cout << std::endl;
                }
                system("pause");
                break;
             case 2:
-                if(raiz == NULL){
-                    system("cls");
-                    std::cout << "\tNo hay elementos para mostrar !!!" << std::endl;
-                    system("pause");
-                }else{
-                    system("cls");
-                    std::cout << "\tSELECTOR DE IMAGENES" << std::endl;
-                    desplegarImagenes(raiz);
-                    std::cout << "\tINGRESA EL NOMBRE EXACTO DE LA IMAGEN: ";
-                    std::cin >> nombreArchivo;
-                    // Aqui pondré el método que me devolverá el cubo con el cual pretendo trabajar
-                    // en los pasos 3, 4, 5, 6;
-                    elemento_paraTrabajo = obtenerCopia(raiz, nombreArchivo);
-                    if(elemento_paraTrabajo != NULL){
-                        std::cout << "Se ha elegido la imagen: " << elemento_paraTrabajo->nombre << std::endl;
-                        std::cout << "Información de Imagen: " << std::endl;
-                        std::cout << elemento_paraTrabajo ->wImg << std::endl;
-                        std::cout << elemento_paraTrabajo ->hImg << std::endl;
-                        std::cout << elemento_paraTrabajo ->wPix << std::endl;
-                        std::cout << elemento_paraTrabajo ->hPix << std::endl;
-                    }else{
-                        // UY UN ERRORCITO
-                        std::cout << "HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN\n";
-                        std::cout << "VERIFICA EL NOMBRE DEL ARCHIVO QUE SEA CORRECTO...";
-                    }
-                }
-                system("pause");
+               if(raiz == NULL) {
+                  system("cls");
+                  std::cout << "\tNo hay elementos para mostrar !!!" << std::endl;
+               } else {
+                  system("cls");
+                  std::cout << "\tSELECTOR DE IMAGENES" << std::endl;
+                  desplegarImagenes(raiz);
+                  std::cout << "\tINGRESA EL NOMBRE EXACTO DE LA IMAGEN: ";
+                  std::cin >> nombreArchivo;
+                  // Aqui pondré el método que me devolverá el cubo con el cual pretendo trabajar
+                  // en los pasos 3, 4, 5, 6;
+                  elemento_paraTrabajo = obtenerCopia(raiz, nombreArchivo);
+                  if(elemento_paraTrabajo != NULL) {
+                     std::cout << "Se ha elegido la imagen: " << elemento_paraTrabajo->nombre << std::endl;
+                     std::cout << "Informacion de Imagen: " << std::endl;
+                     std::cout << "ANCHO IMAGEN : "<< elemento_paraTrabajo ->wImg << std::endl;
+                     std::cout << "ALTO IMAGEN : "<< elemento_paraTrabajo ->hImg << std::endl;
+                     std::cout << "ANCHO PIXEL : "<< elemento_paraTrabajo ->wPix << std::endl;
+                     std::cout << "ALTO PIXEL : "<< elemento_paraTrabajo ->hPix << std::endl << std::endl;
+                  } else {
+                     // UY UN ERRORCITO
+                     std::cout << "\n***HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN\n";
+                     std::cout << "\n***VERIFICA EL NOMBRE DE LA IMAGEN QUE SEA CORRECTO...\n";
+                  }
+               }
+               system("pause");
                break;
             case 3:
+               if(elemento_paraTrabajo != NULL) {
 
+               }else{
+                  std::cout << "SIN IMAGEN CARGADA" << std::endl;
+
+               }
+               system("pause");
                break;
             case 4:  // Edicion Manual
                /*if (temporal.nombre.compare("") == 0) {
@@ -91,7 +97,7 @@ int main(int argc, char const *argv[]) {
                }*/
                break;
             case 6:  // Reportes
-               // menuReportes();
+               graficar_arbol_General(raiz);
                break;
             case 7:  // Salir
                system("cls");
