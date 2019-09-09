@@ -4,7 +4,7 @@
 #include <string>
 
 /*  Definición de Estructuras   */
-struct elementoCabecera {
+/*struct elementoCabecera{
   // Valores de estructura
   std::string color;
   int fila;
@@ -12,7 +12,7 @@ struct elementoCabecera {
   elementoCabecera *sig_elementoCabecera;
 };
 
-struct cabecera {
+struct cabecera{
   // datos
   int column;
   // apuntadores
@@ -20,14 +20,14 @@ struct cabecera {
   cabecera *sigCabecera;
 };
 
-struct capa {
+struct capa{
   std::string nombreCapa;
   cabecera *primer_Cabecera = new cabecera();
   // apuntadores
   capa *sigCapa;
 };
-
-struct cubo {
+*/
+struct cubo{
   // datos del cubo
   std::string nombre;
   int wImg, hImg;
@@ -37,19 +37,18 @@ struct cubo {
   // punteros para arbol binario
   cubo *izq_Cubo;
   cubo *der_Cubo;
-} * primerCubito;
-
+} *primerCubito;
 /*Definición de métodos*/
 /*Arbol*/
-void agregarCubo(cubo *, cubo *);
-void desplegarImagenes(cubo);
+//void agregarCubo(cubo *, cubo *);
+//void desplegarImagenes(cubo);
 /*Lista Simple*/
-void agregarCapa(cubo *, capa *);
+/*void agregarCapa(cubo *, capa *);
 void agregarCabecera(capa *, cabecera *);
 void agregarFila(cabecera *, elementoCabecera *);
-
+*/
 /*Estructura de árbol para el manejo del cubo*/
-void agregarCubo(cubo *raizArbol, cubo *nuevoCubo) {
+/*void agregarCubo(cubo *raizArbol, cubo *nuevoCubo) {
   if (nuevoCubo->nombre.compare(raizArbol->nombre) <
       0) {  // Si el nombre de la nueva imagen es < al de la raiz, se coloca a
             // la izquierda de la raiz.
@@ -76,9 +75,9 @@ void desplegarImagenes(cubo *raizArbol) {
     desplegarImagenes(raizArbol->der_Cubo);
   }
 }
-
+*/
 /*Agregar capas al cubo actual*/
-void agregarCapa(cubo *cubito, capa *capita) {
+/*void agregarCapa(cubo *cubito, capa *capita) {
   if (cubito->primerCapa == NULL) {
     cubito->primerCapa = capita;
   } else {
@@ -98,9 +97,9 @@ capa obtenerCapa(cubo *cubito, std::string nombreCapa){
   }
   return *temp;
 }
-
+*/
 /*Agregar cabecera a capa*/
-void agregarCabecera(capa *capita, cabecera *cabecera_chiquita) {
+/*void agregarCabecera(capa *capita, cabecera *cabecera_chiquita) {
   if (capita->primer_Cabecera == NULL) {
     capita->primer_Cabecera = cabecera_chiquita;
   } else {
@@ -111,9 +110,9 @@ void agregarCabecera(capa *capita, cabecera *cabecera_chiquita) {
     temp = cabecera_chiquita;
   }
 }
-
+*/
 /*Agregar un elemento de fila a la cabecera hecha*/
-void agregarFila(cabecera *cabecera_chiquita, elementoCabecera *elemento){
+/*void agregarFila(cabecera *cabecera_chiquita, elementoCabecera *elemento){
   if (cabecera_chiquita->primerElementoCabecera == NULL)
   {
     cabecera_chiquita->primerElementoCabecera = elemento;
@@ -125,4 +124,6 @@ void agregarFila(cabecera *cabecera_chiquita, elementoCabecera *elemento){
     }
     temp = elemento;
   }
+  
 }
+*/

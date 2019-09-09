@@ -4,8 +4,11 @@
 
 int main(int argc, char const *argv[]) {
   // Elemento para poder crear el árbol binario de cubos.
-  cubo raiz = cubo();
-  cubo temporal = cubo();
+  //cubo raiz = cubo();
+  //cubo temporal = cubo();
+  /*Variables iniciales*/
+  std::string nombre;
+  std::string ruta;
   /*Menú Inicial*/
   int op = 0;
   while (op != 7) {
@@ -24,7 +27,11 @@ int main(int argc, char const *argv[]) {
       switch (op) {
         case 1:
           /*Cargar Imagen*/
-          //cargarImagen(&raiz);
+          system("cls");
+          std::cout << " Ingrese el nombre del archivo con extension '.csv' \n" << " Asegurese que la carpeta se llame igual al archivo inicial >>> ";
+          std::getline(std::cin,nombre,'\n');
+          ruta = "csv\\" + nombre.substr(0,nombre.length() - 4) + "\\" + nombre;
+          leerArchivo(ruta);
           break;
         case 2:
           // Seleccionar Imagen
@@ -33,23 +40,27 @@ int main(int argc, char const *argv[]) {
           break;
         case 3:
           // Aplicar filtros
-          if (temporal.nombre.compare("") == 0) {
+          /*if (temporal.nombre.compare("") == 0) {
             std::cout << "### No hay imagen cargada :( ###" << std::endl;
           } else {
-          }
+          }*/
           // aplicarFiltro(temporal); // temporal solamente servirá como valor,
           // no como referencia;
           break;
         case 4:  // Edicion Manual
-          if (temporal.nombre.compare("") == 0) {
+          /*if (temporal.nombre.compare("") == 0) {
             std::cout << "### No hay imagen cargada :( ###" << std::endl;
           } else {
-          }
+          }*/
           break;
         case 5:  // Exportar Imagen
+          /*if (temporal.nombre.compare("") == 0) {
+            std::cout << "### No hay imagen cargada :( ###" << std::endl;
+          } else {
+          }*/
           break;
         case 6:  // Reportes
-            //menuReportes();
+                 // menuReportes();
           break;
         case 7:  // Salir
           system("cls");
