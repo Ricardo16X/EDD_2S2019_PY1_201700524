@@ -78,7 +78,7 @@ int main(int argc, char const *argv[]) {
             case 3:
                if(elemento_paraTrabajo != NULL) {
 
-               }else{
+               } else {
                   std::cout << "SIN IMAGEN CARGADA" << std::endl;
 
                }
