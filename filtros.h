@@ -1,6 +1,11 @@
 #ifndef FILTROS_H_INCLUDED
 #define FILTROS_H_INCLUDED
 
+#include "ACCIONES_ESTRUCTURAS.h"
 
+/**FILTROS DE LAS IMAGENES**/
+void cubo_grises(ARBOL cubo){
+
+}
 
 #endif // FILTROS_H_INCLUDED

@@ -131,11 +131,11 @@ void graficar_arbol_General(ARBOL raizArbol) {
    dot += "}";
    // Alli iría la ruta donde se encuentra el cubo para generar allí todas las imágenes X necesarias.
    // para los repotes.
-   std::ofstream archivoDOT("archivo.dot");
+   std::ofstream archivoDOT("reportes\\archivo.dot");
    archivoDOT << dot << std::endl;
    archivoDOT.close();
-   system("dot -Tpng archivo.dot -o Arbol_Cubos.png");
-   system("Arbol_Cubos.png");
+   system("dot -Tpng reportes\\archivo.dot -o reportes\\Arbol_Cubos.png");
+   system("reportes\\Arbol_Cubos.png");
 }
 
 void graficarExtra(ARBOL raiz, std::string* dotArchivo) {
@@ -253,4 +253,6 @@ void agregarFila(cabecera *cabecera_chiquita, elementoCabecera *elemento) {
       temp->siguiente = elemento;
    }
 }
+
+
 #endif // ESTRUCTURAS_H_INCLUDED
