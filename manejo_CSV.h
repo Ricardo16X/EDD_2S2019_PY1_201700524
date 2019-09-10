@@ -53,7 +53,6 @@ ARBOL leerArchivo(std::string ruta)
             }
             numArchivo++;
         }
-        std::cout << "La imagen " << ruta << " se ha insertado correctamente. " << std::endl;
         arch_init.close();
         return nuevaImagen;
     }

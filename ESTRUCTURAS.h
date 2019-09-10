@@ -69,6 +69,8 @@ struct cubo {
 };
 typedef struct cubo* ARBOL;
 
+/**VARIABLES GLOBALES**/
+bool repetido = true;
 
 /************************************************/
 void graficarExtra(ARBOL raiz, std::string* dotArchivo);
@@ -81,6 +83,7 @@ void insertar(ARBOL &arbol, ARBOL nuevoCubo) {
       // Si se llega al punto en dónde el nodo del arbol no
       // apunta a nada, allí se colocará la nueva imagen.
       arbol = nuevoCubo;
+      std::cout << "\nIMAGEN " << nuevoCubo->nombre << " INSERTADA CORRECTAMENTE\n" << std::endl;
    } else if (nuevoCubo->nombre.compare(arbol->nombre) < 0) {
       // Si el nombre de la nueva imagen es < al de la raiz, se coloca a
       // la izquierda de la raiz.
@@ -132,17 +135,17 @@ void graficar_arbol_General(ARBOL raizArbol) {
    archivoDOT << dot << std::endl;
    archivoDOT.close();
    system("dot -Tpng archivo.dot -o Arbol_Cubos.png");
-   //system("nohup display \\graphviz_result\\Arbol_Cubos.png &" );
+   system("Arbol_Cubos.png");
 }
 
 void graficarExtra(ARBOL raiz, std::string* dotArchivo) {
    if(raiz != NULL) {
       /**VARIABLES PARA CONCATENARLAS EN *dotArchivo**/
-        std::string ANCHOIMAGEN = std::to_string(raiz->wImg);
-        std::string ALTOIMAGEN = std::to_string(raiz->hImg);
-        std::string ANCHOPIXEL = std::to_string(raiz->wPix);
-        std::string ALTOPIXEL = std::to_string(raiz->hPix);
-      *dotArchivo += "nodo" + raiz->nombre +  "[label = \"  " + raiz->nombre + "\\n \\n Dimensiones: \\nAncho Imagen: " + ANCHOIMAGEN + "\\nAlto Imagen: " + ALTOIMAGEN + "\\nDimensiones Pixel:\\nAncho Pixel: " + ANCHOPIXEL + "\\nAlto Pixel: " + ALTOPIXEL + " \"];\n";
+      std::string ANCHOIMAGEN = std::to_string(raiz->wImg);
+      std::string ALTOIMAGEN = std::to_string(raiz->hImg);
+      std::string ANCHOPIXEL = std::to_string(raiz->wPix);
+      std::string ALTOPIXEL = std::to_string(raiz->hPix);
+      *dotArchivo += "nodo" + raiz->nombre +  "[label = \"  " + raiz->nombre + "\\n Dimensiones: \\nAncho Imagen: " + ANCHOIMAGEN + "\\nAlto Imagen: " + ALTOIMAGEN + "\\nDimensiones Pixel:\\nAncho Pixel: " + ANCHOPIXEL + "\\nAlto Pixel: " + ALTOPIXEL + " \"];\n";
       graficarExtra(raiz->izq_Cubo, dotArchivo);
       graficarExtra(raiz->der_Cubo, dotArchivo);
 
@@ -155,16 +158,42 @@ void graficarExtra(ARBOL raiz, std::string* dotArchivo) {
    }
 }
 
-void graficar_arbol_PreOrder(ARBOL raizArbol) {
-
+void graficar_arbol_PreOrder(ARBOL raizArbol, std::string* dotArchivo) {   //FUNCIONA BIEN
+   if(raizArbol != NULL) {
+      *dotArchivo += "\"" + raizArbol->nombre + "\" -> ";
+      graficar_arbol_PreOrder(raizArbol->izq_Cubo, dotArchivo);
+      graficar_arbol_PreOrder(raizArbol->der_Cubo, dotArchivo);
+   }
 }
 
-void graficar_arbol_InOrder(ARBOL raizArbol) {
-
+void graficar_arbol_InOrder(ARBOL raizArbol, std::string* dotArchivo) {    //FUNCIONA BIEN
+   if(raizArbol != NULL) {
+      graficar_arbol_PreOrder(raizArbol->izq_Cubo, dotArchivo);
+      *dotArchivo += "\"" + raizArbol->nombre + "\" -> ";
+      graficar_arbol_PreOrder(raizArbol->der_Cubo, dotArchivo);
+   }
 }
 
-void graficar_arbol_PostOrder(ARBOL raizArbol) {
+void graficar_arbol_PostOrder(ARBOL raizArbol, std::string* dotArchivo) {
+   if(raizArbol != NULL) {
+      graficar_arbol_PreOrder(raizArbol->izq_Cubo, dotArchivo);
+      graficar_arbol_PreOrder(raizArbol->der_Cubo, dotArchivo);
+      *dotArchivo += "\"" + raizArbol->nombre + "\" -> ";
+   }
+}
 
+bool noExiste(ARBOL raiz, std::string comparado) {
+   if(raiz != NULL) {
+      if(comparado.compare(raiz->nombre) == 0) {
+         repetido = false;
+         return false;
+      }else{
+         repetido = true;
+      }
+      noExiste(raiz->izq_Cubo, comparado);
+      noExiste(raiz->der_Cubo, comparado);
+   }
+   return repetido;
 }
 
 /**MÉTODOS PARA EL MANEJO DE LA LISTA DE CAPAS DEL CUBO**/
