@@ -89,13 +89,13 @@ int main(int argc, char const *argv[]) {
                // Menú de reportes
                if(raiz != NULL) {
                   while(op != 0) {
-                        /**
-   std::cout << "1. IMAGENES IMPORTADAS" << std::endl;
-   std::cout << "2. IMAGE LAYER REPORT" << std::endl;
-   std::cout << "3. LINEAR MATRIX REPORT" << std::endl;
-   std::cout << "4. TRAVERSAL REPORT" << std::endl;
-   std::cout << "5. FILTERS REPORT" << std::endl;
-   std::cout << "0. Salir" << std::endl;**/
+                     /**
+                     std::cout << "1. IMAGENES IMPORTADAS" << std::endl;
+                     std::cout << "2. IMAGE LAYER REPORT" << std::endl;
+                     std::cout << "3. LINEAR MATRIX REPORT" << std::endl;
+                     std::cout << "4. TRAVERSAL REPORT" << std::endl;
+                     std::cout << "5. FILTERS REPORT" << std::endl;
+                     std::cout << "0. Salir" << std::endl;**/
                      menuREPORTS();
                      std::cin >> op;
                      switch (op) {
@@ -105,17 +105,19 @@ int main(int argc, char const *argv[]) {
                         case 2:
                            // REPORTE DE CAPAS DEL CUBO
                            op = 9;
-                           grafico = "";
                            while(op != 3) {
                               menuMATRIZ();
                               std::cin >> op;
-                              switch (op)
-                              {
-                              case 1:
-                                 // MATRIZ POR CAPA INDIVIDUAL
-                                  break;
-                              case 2:  // MATRIZ COMPLETA
-                                 break;
+                              switch (op) {
+                                 case 1:  // MATRIZ POR CAPA INDIVIDUAL
+                                    system("cls");
+                                    mostrarCapas(elemento_paraTrabajo);
+                                    std::cout << "Por favor, ingresa el nombre exacto del elemento";
+                                    std::cin >> nombreArchivo;
+                                    graficar_capaIndividual(obtenerCapa(elemento_paraTrabajo,nombreArchivo));
+                                    break;
+                                 case 2:  // MATRIZ COMPLETA
+                                    break;
                               }
                            }
                         case 4:
@@ -172,7 +174,7 @@ int main(int argc, char const *argv[]) {
                            break;
                      }
                   }
-               }else{
+               } else {
                   std::cout << "\n\n**SIN IMAGENES CARGADAS&&\n" << std::endl;
                }
                system("pause");

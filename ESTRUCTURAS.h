@@ -187,7 +187,7 @@ bool noExiste(ARBOL raiz, std::string comparado) {
       if(comparado.compare(raiz->nombre) == 0) {
          repetido = false;
          return false;
-      }else{
+      } else {
          repetido = true;
       }
       noExiste(raiz->izq_Cubo, comparado);
@@ -217,6 +217,121 @@ capa* obtenerCapa(cubo *cubito, std::string nombreCapa) {
    return temp;
 }
 
+void graficar_capaIndividual(capa* capita) {
+   std::string rank_same_columnas = "";
+   std::string rank_same_filas = "";
+   // Variables auxiliares
+   std::string identificador = "";
+   std::string identificadorContenido = "";
+   std::string antiguoIdentificador = "";
+   std::string antiguoIdentificadorContenido = "";
+
+   std::string dot = "digraph G{\n rankdir=TB;\n node[shape=record];\n graph[nodesep=0.6];\n";
+   dot += "CAPA[label=\"" + capita->nombreCapa + "\"];\n";
+   identificador = "CAPA";
+   // la variable ranksame solo me servirá para colocarlo de ultimo al .dot para posicionar a la misma altura
+   // anchura todas las demas variables a crear.
+   rank_same_columnas = "{rank=same; CAPA ";
+
+   /**RECORRIDO DE COLUMNAS VERTICALES**/
+   cabecera* columnas = capita->primer_Cabecera;
+   elementoCabecera* filas;
+
+   while(columnas != NULL) {
+      /*AGREGO UNA NUEVA COLUMNA AL RANK_SAME_COLUMNAS*/
+      rank_same_columnas += "C" + std::to_string(columnas->column) + " ";
+      /*LA COLUMNA ACTUAL SERÁ LA COLUMNA ANTIGUA*/
+      antiguoIdentificador = identificador;
+      /*SE CREA UN NUEVO IDENTIFICADOR DE COLUMNA*/
+      identificador = "C" + std::to_string(columnas->column);
+      /*AHORA COLOCAMOS ESE IDENTIFICADOR EN EL .DOT*/
+      dot+= identificador + "[label=\""+ identificador  +"\"];\n";
+      /*AHORA NUESTRO IDENTIFICADOR ANTIGUO >"APUNTARA"> NUEVO IDENTIFICADOR PARA EL MOMENTO DE COLOCARLO
+      EN NUESTRO .DOT*/
+      dot+= antiguoIdentificador + "--" + identificador + "[dir=both];\n";
+      // ESTE PASO SOLO ME VERIFICA QUE LA VARIABLE FILAS APUNTE AL INICIO DE LA CABECERA QUE PUEDE SER
+      // LA PRIMER CELDA SIN IMPORTAR SI TIENE COLOR O NO.
+      filas = columnas->primerElementoCabecera;
+      // ANTES DE INICIAR POR LAS FILAS, COMIENZA UNA COLUMNA, ENTONCES
+      // ESE SERÁ MI PUNTO DE INICIO CON LAS COMPARACIONES DE FILAS
+      identificadorContenido = identificador;
+      while(filas != NULL) {
+         if(!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0))) {
+            antiguoIdentificadorContenido = identificadorContenido;
+            identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);
+            dot += identificadorContenido + "[label=\"" + filas->color  + "\"];\n";
+            dot += antiguoIdentificadorContenido + "--" + identificadorContenido + "[dir=both];\n";
+         }
+         filas = filas->siguiente;
+      }
+      columnas = columnas->siguiente;
+   }
+   rank_same_columnas += "}\n";
+
+   /**RECORRIDO DE FILA HORIZONTAL**/
+   int filaStop = 1;
+   identificador = "CAPA";
+   bool salir = true;
+
+   while(salir) { // Me indicará cuando salir, media vez alcance el punto máximo de filas permitidas.
+      columnas = capita->primer_Cabecera;
+      /**SEGUIRÉ LA MISMA DINÁMICA DE COMO SI ESTUVIERA RECORRIENDO EN VERTICAL**/
+      antiguoIdentificador = identificador;
+      identificador = "F" + std::to_string(filaStop);
+      dot += identificador + "[label=\"" + identificador  + "\"];\n";
+      /*MODIFICANDO MI RANK_SAME_FILAS PARA QUE CASEN LOS VALORES Y ASÍ PUEDA ESTAR ORDENADO AL MOMENTO DE GRAFICAR*/
+      rank_same_filas += "{rank=same; " + identificador;
+      identificadorContenido = identificador;
+      while(columnas != NULL) {  // Recorreré todas las columnas en busca del valor distinto de X en la fila N
+         filas = columnas->primerElementoCabecera;
+         while(filas != NULL) {  // Recorreré hasta la fila n de stop
+            if(filas->fila == filaStop) { // Si he llegado a la fila actual, entonces procederé a evaluar el valor en dicha columna y fila.
+               // Conectar el punto anterior, con el actual...
+               if(!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0))) {
+                  antiguoIdentificadorContenido = identificadorContenido;
+                  identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);
+                  rank_same_filas += identificadorContenido + " ";
+                  dot += antiguoIdentificadorContenido + "--" + identificadorContenido + "[dir=both];\n";
+               }
+               break;
+            }
+            filas = filas->siguiente;
+         }
+         columnas = columnas->siguiente;
+      }
+      if(filas->siguiente != NULL) {
+         /**AL MOMENTO DE ACABAR LOS ENLACES DE LAS FILAS, ENTONCES CIERRO EL RANK_SAME_FILAS PARA QUE SOLO ME QUEDEN SEPARADAS
+         LAS FILAS QUE DESEO GRAFICAR.**/
+         filaStop++;
+      } else {
+         salir = false;
+      }
+      rank_same_filas += "}\n";
+   }
+
+   dot += rank_same_columnas;
+   dot += rank_same_filas;
+   dot += "}\n";
+   /**PRUEBA DE SYSTEM**/
+   std::ofstream archivoDOT("reportes\\"+capita->nombreCapa+".dot");
+   archivoDOT << dot << std::endl;
+   archivoDOT.close();
+   /**CONVERSION ENTRE CONST CHAR Y STD::STRING**/
+   std::string temp = "dot -Tpng reportes\\"  + capita->nombreCapa  +  ".dot -o reportes\\"+capita->nombreCapa+".png";
+   std::string rutaOpen = "reportes\\"+capita->nombreCapa+".png";
+   const char* c = temp.c_str();
+   const char* open = rutaOpen.c_str();
+   system(c);
+   system(open);
+}
+
+void mostrarCapas(ARBOL cubo){
+   capa* temp = cubo->primerCapa;
+   while(temp!=NULL){
+      std::cout << "*" << temp->nombreCapa << std::endl;
+      temp = temp->siguiente;
+   }
+}
 /**MÉTODOS PARA EL MANEJO DE LA LISTA DE CABECERAS DE LA CAPA**/
 void agregarCabecera(capa *capita, cabecera *cabecera_chiquita) {
    if (capita->primer_Cabecera == NULL) {
