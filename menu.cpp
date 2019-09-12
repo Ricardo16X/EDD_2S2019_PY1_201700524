@@ -10,7 +10,7 @@ int main(int argc, char const *argv[]) {
    /*Variables a utilizar globalmente en el main.*/
    ARBOL raiz = 0;
    cubo* nuevoElemento;
-   cubo* elemento_paraTrabajo;
+   cubo* elemento_paraTrabajo = 0;
 
 
    std::string nombreArchivo = "";  // Nombre general del archivo.
@@ -50,6 +50,7 @@ int main(int argc, char const *argv[]) {
                   std::cout << "\tNo hay elementos para mostrar !!!" << std::endl;
                } else {
                   system("cls");
+                  elemento_paraTrabajo = 0;
                   std::cout << "\tSELECTOR DE IMAGENES" << std::endl;
                   desplegarImagenes(raiz);
                   std::cout << "\tINGRESA EL NOMBRE EXACTO DE LA IMAGEN: ";
@@ -104,20 +105,28 @@ int main(int argc, char const *argv[]) {
                            break;
                         case 2:
                            // REPORTE DE CAPAS DEL CUBO
-                           op = 9;
-                           while(op != 3) {
-                              menuMATRIZ();
-                              std::cin >> op;
-                              switch (op) {
-                                 case 1:  // MATRIZ POR CAPA INDIVIDUAL
-                                    system("cls");
-                                    mostrarCapas(elemento_paraTrabajo);
-                                    std::cout << "Por favor, ingresa el nombre exacto del elemento";
-                                    std::cin >> nombreArchivo;
-                                    graficar_capaIndividual(obtenerCapa(elemento_paraTrabajo,nombreArchivo));
-                                    break;
-                                 case 2:  // MATRIZ COMPLETA
-                                    break;
+                           if(elemento_paraTrabajo != NULL) {
+                              op = 9;
+                              while(op != 3) {
+                                 menuMATRIZ();
+                                 std::cin >> op;
+                                 switch (op) {
+                                    case 1:  // MATRIZ POR CAPA INDIVIDUAL
+                                       system("cls");
+                                       mostrarCapas(elemento_paraTrabajo);
+                                       std::cout << "Por favor, ingresa el nombre exacto del elemento" << std::endl;
+                                       std::cin >> nombreArchivo;
+                                       graficar_capaIndividual(obtenerCapa(elemento_paraTrabajo,nombreArchivo));
+                                       system("pause");
+                                       break;
+                                    case 2:  // MATRIZ COMPLETA
+                                       capa* temp = elemento_paraTrabajo->primerCapa;
+                                       while(temp != NULL){
+                                          graficar_capaIndividual(temp);
+                                          temp = temp->siguiente;
+                                       }
+                                       break;
+                                 }
                               }
                            }
                         case 4:

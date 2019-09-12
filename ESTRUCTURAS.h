@@ -73,7 +73,7 @@ typedef struct cubo* ARBOL;
 bool repetido = true;
 
 /************************************************/
-void graficarExtra(ARBOL raiz, std::string* dotArchivo);
+void graficarExtra(ARBOL raiz, std::string* dotArchivo, int id);
 
 /**MÉTODOS PARA EL MANEJO DE ARBOL DE LOS CUBOS**/
 void insertar(ARBOL &arbol, ARBOL nuevoCubo) {
@@ -127,33 +127,49 @@ ARBOL obtenerCopia(ARBOL &raiz, std::string nombre) {
 
 void graficar_arbol_General(ARBOL raizArbol) {
    std::string dot = "digraph G{\n";
-   graficarExtra(raizArbol, &dot);
+   int id = 1;
+   graficarExtra(raizArbol, &dot, id);
    dot += "}";
    // Alli iría la ruta donde se encuentra el cubo para generar allí todas las imágenes X necesarias.
    // para los repotes.
-   std::ofstream archivoDOT("reportes\\archivo.dot");
+   std::ofstream archivoDOT("reportes\\arbolIMAGENES.dot");
    archivoDOT << dot << std::endl;
    archivoDOT.close();
-   system("dot -Tpng reportes\\archivo.dot -o reportes\\Arbol_Cubos.png");
-   system("reportes\\Arbol_Cubos.png");
+   system("dot -Tpng reportes\\arbolIMAGENES.dot -o reportes\\arbolIMAGENES.png");
+   system("reportes\\arbolIMAGENES.png");
 }
 
-void graficarExtra(ARBOL raiz, std::string* dotArchivo) {
+void graficarExtra(ARBOL raiz, std::string* dotArchivo, int id) {
    if(raiz != NULL) {
       /**VARIABLES PARA CONCATENARLAS EN *dotArchivo**/
       std::string ANCHOIMAGEN = std::to_string(raiz->wImg);
       std::string ALTOIMAGEN = std::to_string(raiz->hImg);
       std::string ANCHOPIXEL = std::to_string(raiz->wPix);
       std::string ALTOPIXEL = std::to_string(raiz->hPix);
-      *dotArchivo += "nodo" + raiz->nombre +  "[label = \"  " + raiz->nombre + "\\n Dimensiones: \\nAncho Imagen: " + ANCHOIMAGEN + "\\nAlto Imagen: " + ALTOIMAGEN + "\\nDimensiones Pixel:\\nAncho Pixel: " + ANCHOPIXEL + "\\nAlto Pixel: " + ALTOPIXEL + " \"];\n";
-      graficarExtra(raiz->izq_Cubo, dotArchivo);
-      graficarExtra(raiz->der_Cubo, dotArchivo);
-
+      *dotArchivo += raiz->nombre + "[label = \"  " +"***"+ raiz->nombre+"***" + "\\n Dimensiones: \\nAncho Imagen: " + ANCHOIMAGEN + "\\nAlto Imagen: " + ALTOIMAGEN + "\\nDimensiones Pixel:\\nAncho Pixel: " + ANCHOPIXEL + "\\nAlto Pixel: " + ALTOPIXEL + " \"];\n";
+      id = id + 1;
+      graficarExtra(raiz->izq_Cubo, dotArchivo, id);
+      graficarExtra(raiz->der_Cubo, dotArchivo, id);
+      std::cout << id << std::endl;
       if (raiz->izq_Cubo != NULL) {
-         *dotArchivo += "\"nodo" + raiz->nombre + "\" -> \"nodo" + raiz->izq_Cubo->nombre + "\";\n";
+         *dotArchivo += raiz->nombre + " -> " + raiz->izq_Cubo->nombre + "\";\n";
       }
+      std::string str = "";
+      str = "x" + std::to_string(id);
+      *dotArchivo += str  + "[label=\"\",width=.1,style=invis];\n";
+      *dotArchivo += raiz->nombre + "-> " + str + "[style=invis];\n";
+      std::string rank_same = "{rank=same; ";
+      if(raiz->izq_Cubo != NULL){
+         rank_same += raiz->izq_Cubo->nombre + " -> ";
+      }
+      rank_same += str;
+      if(raiz->der_Cubo != NULL){
+         rank_same += " -> " + raiz->der_Cubo->nombre;
+      }
+      rank_same += "[style=invis]};\n";
+      *dotArchivo += rank_same;
       if(raiz->der_Cubo != NULL) {
-         *dotArchivo += "\"nodo" + raiz->nombre + "\" -> \"nodo" + raiz->der_Cubo->nombre + "\";\n";
+         *dotArchivo += raiz->nombre + " -> " + raiz->der_Cubo->nombre + ";\n";
       }
    }
 }
@@ -226,7 +242,7 @@ void graficar_capaIndividual(capa* capita) {
    std::string antiguoIdentificador = "";
    std::string antiguoIdentificadorContenido = "";
 
-   std::string dot = "digraph G{\n rankdir=TB;\n node[shape=record];\n graph[nodesep=0.6];\n";
+   std::string dot = "digraph G{\n rankdir=TB;\n node[shape=record];\n graph[nodesep=1];\n";
    dot += "CAPA[label=\"" + capita->nombreCapa + "\"];\n";
    identificador = "CAPA";
    // la variable ranksame solo me servirá para colocarlo de ultimo al .dot para posicionar a la misma altura
@@ -245,10 +261,10 @@ void graficar_capaIndividual(capa* capita) {
       /*SE CREA UN NUEVO IDENTIFICADOR DE COLUMNA*/
       identificador = "C" + std::to_string(columnas->column);
       /*AHORA COLOCAMOS ESE IDENTIFICADOR EN EL .DOT*/
-      dot+= identificador + "[label=\""+ identificador  +"\"];\n";
+      dot+= identificador + "[label=\""+ identificador  +"\", constraint=false];\n";
       /*AHORA NUESTRO IDENTIFICADOR ANTIGUO >"APUNTARA"> NUEVO IDENTIFICADOR PARA EL MOMENTO DE COLOCARLO
       EN NUESTRO .DOT*/
-      dot+= antiguoIdentificador + "--" + identificador + "[dir=both];\n";
+      dot+= antiguoIdentificador + "->" + identificador + "[dir=both];\n";
       // ESTE PASO SOLO ME VERIFICA QUE LA VARIABLE FILAS APUNTE AL INICIO DE LA CABECERA QUE PUEDE SER
       // LA PRIMER CELDA SIN IMPORTAR SI TIENE COLOR O NO.
       filas = columnas->primerElementoCabecera;
@@ -260,7 +276,7 @@ void graficar_capaIndividual(capa* capita) {
             antiguoIdentificadorContenido = identificadorContenido;
             identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);
             dot += identificadorContenido + "[label=\"" + filas->color  + "\"];\n";
-            dot += antiguoIdentificadorContenido + "--" + identificadorContenido + "[dir=both];\n";
+            dot += antiguoIdentificadorContenido + "->" + identificadorContenido + "[dir=both];\n";
          }
          filas = filas->siguiente;
       }
@@ -279,6 +295,8 @@ void graficar_capaIndividual(capa* capita) {
       antiguoIdentificador = identificador;
       identificador = "F" + std::to_string(filaStop);
       dot += identificador + "[label=\"" + identificador  + "\"];\n";
+      /**ENLAZO EL ANTIGUO IDENTIFICADOR CON EL NUEVO IDENTIFICADOR**/
+      dot += antiguoIdentificador + "->" + identificador + "[dir=both, constraint=true];\n";
       /*MODIFICANDO MI RANK_SAME_FILAS PARA QUE CASEN LOS VALORES Y ASÍ PUEDA ESTAR ORDENADO AL MOMENTO DE GRAFICAR*/
       rank_same_filas += "{rank=same; " + identificador;
       identificadorContenido = identificador;
@@ -290,8 +308,8 @@ void graficar_capaIndividual(capa* capita) {
                if(!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0))) {
                   antiguoIdentificadorContenido = identificadorContenido;
                   identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);
-                  rank_same_filas += identificadorContenido + " ";
-                  dot += antiguoIdentificadorContenido + "--" + identificadorContenido + "[dir=both];\n";
+                  rank_same_filas += " " + identificadorContenido;
+                  dot += antiguoIdentificadorContenido + "->" + identificadorContenido + "[dir=both, constraint=false];\n";
                }
                break;
             }
@@ -317,8 +335,8 @@ void graficar_capaIndividual(capa* capita) {
    archivoDOT << dot << std::endl;
    archivoDOT.close();
    /**CONVERSION ENTRE CONST CHAR Y STD::STRING**/
-   std::string temp = "dot -Tpng reportes\\"  + capita->nombreCapa  +  ".dot -o reportes\\"+capita->nombreCapa+".png";
-   std::string rutaOpen = "reportes\\"+capita->nombreCapa+".png";
+   std::string temp = "dot -Tjpg reportes\\"  + capita->nombreCapa  +  ".dot -o reportes\\"+capita->nombreCapa+".jpg";
+   std::string rutaOpen = "reportes\\"+capita->nombreCapa+".jpg";
    const char* c = temp.c_str();
    const char* open = rutaOpen.c_str();
    system(c);
@@ -331,6 +349,32 @@ void mostrarCapas(ARBOL cubo){
       std::cout << "*" << temp->nombreCapa << std::endl;
       temp = temp->siguiente;
    }
+}
+
+void grafica_linealColumn(capa* capita){
+   /**IRE METIENDO LOS DATOS POR COLUMNAS**/
+   cabecera* columna  = capita->primer_Cabecera;
+   elementoCabecera* fila;
+   std::string dot = "digraph G{\n";
+   std::string antiguo = "", nuevo = "INICIO";
+   while(columna != NULL){
+      fila = columna->primerElementoCabecera;
+      while(fila != NULL){
+         if(!((fila->color == "x")||(fila->color == "X"))){
+            antiguo = nuevo;
+            nuevo = "(" + std::to_string(columna->column) + "," + std::to_string(fila->fila) + ") " + fila->color;
+         }
+         fila = fila->siguiente;
+      }
+      /**avanzar en columna**/
+      columna = columna->siguiente;
+   }
+   std::ofstream graphic("reportes\\linearColumn.dot");
+}
+
+void grafica_linealRow(capa* capita){
+   /**IRE METIENDO LOS DATOS POR FILA**
+
 }
 /**MÉTODOS PARA EL MANEJO DE LA LISTA DE CABECERAS DE LA CAPA**/
 void agregarCabecera(capa *capita, cabecera *cabecera_chiquita) {
