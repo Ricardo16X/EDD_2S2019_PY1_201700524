@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 
-void menuINIT() {
+void menuINIT()
+{
    system("cls");
    std::cout << "\t Menu" << std::endl;
    std::cout << "1. Insertar Imagen" << std::endl;
@@ -16,17 +17,19 @@ void menuINIT() {
    std::cout << "7. Salir" << std::endl;
 }
 
-void menuFILTROS() {
+void menuFILTROS()
+{
    system("cls");
-   std::cout << "\t**MENU DE FILTROS&&" <<std::endl;
-   std::cout << "1. Escala de Grises" << std::endl;
-   // EC = r*0.4 + g*0.89 + b*0.11
-   // rgb(EC,EC,EC);
-   std::cout << "2. Negativo" << std::endl;
-   // rgb(255-r,255-g,255-b);
+   std::cout << "\t**MENU DE FILTROS&&" << std::endl;
+   std::cout << "1. NEGATIVO" << std::endl;
+   std::cout << "2. ESCALA DE GRISES" << std::endl;
+   std::cout << "3. ESPEJO" << std::endl;
+   std::cout << "4. REGRESAR" << std::endl;
+   /*pronto nuevos filtros*/
 }
 
-void menuREPORTS() {
+void menuREPORTS()
+{
    system("cls");
    std::cout << "\t**MENU DE REPORTES&&" << std::endl;
    std::cout << "1. IMAGENES IMPORTADAS" << std::endl;
@@ -37,11 +40,30 @@ void menuREPORTS() {
    std::cout << "0. Salir" << std::endl;
 }
 
-void menuMATRIZ() {
+void menuMATRIZ()
+{
    system("cls");
-   std::cout << "/tREPORTES DE MATRIZ" << std::endl;
+   std::cout << "\tREPORTES DE MATRIZ" << std::endl;
    std::cout << "1. Capa Individual" << std::endl;
    std::cout << "2. Cubo Completo" << std::endl;
    std::cout << "3. SALIR" << std::endl;
+}
+
+void menuFiltrosMirror()
+{
+   system("cls");
+   std::cout << "\tMENU DE FILTROS DE ESPEJO" << std::endl;
+   std::cout << "\t1.Espejo - Eje X " << std::endl;
+   std::cout << "\t2.Espejo - Eje Y" << std::endl;
+   std::cout << "\t3.Espejo - Ambos Ejes" << std::endl;
+   std::cout << "\t4.Regresar" << std::endl;
+}
+
+void menu_opcionFiltro()
+{
+   system("cls");
+   std::cout << "1. FILTRO A IMAGEN COMPLETA" << std::endl;
+   std::cout << "2. FILTRO A CAPA" << std::endl;
+   std::cout << "3. Salir" << std::endl;
 }
 #endif // MENSAJITOS_H_INCLUDED

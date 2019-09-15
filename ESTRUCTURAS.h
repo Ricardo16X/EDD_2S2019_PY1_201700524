@@ -42,6 +42,7 @@ struct cabecera
 /**LISTA DE CAPAS**/
 struct capa
 {
+   int numeroCapa = 0;
    std::string nombreCapa;
    cabecera *primer_Cabecera = 0;
    // apuntadores
@@ -91,7 +92,6 @@ void graficarExtra(ARBOL raiz, std::string *dotArchivo, int id);
 void insertar(ARBOL &arbol, ARBOL nuevoCubo)
 {
    // Mostrar los nombres de ambos archivos para ver cual es cual.
-
    if (arbol == NULL)
    {
       // Si se llega al punto en d�nde el nodo del arbol no
@@ -265,10 +265,26 @@ void agregarCapa(cubo *cubito, capa *capita)
    else
    {
       capa *temp = cubito->primerCapa;
-      while (temp->siguiente != NULL)
-      {
+      capa *anterior = 0;
+
+      int insertado = capita->numeroCapa;
+
+      while(temp->siguiente != NULL){
+         if(insertado < temp->numeroCapa){
+            if(temp == cubito->primerCapa){  /**PRIMERO EVALUO SI ES EL PRIMERO DE LA LISTA**/
+               capita->siguiente = cubito->primerCapa;
+               cubito->primerCapa = capita;
+               return;  // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
+            }else{   /**ESTOY INSERTANDO ENTRE 2 NODOS, POR LO CUAL DEBO CNOCER CUAL ES EL ACTUAL Y ANTERIOR**/
+               capita->siguiente = anterior->siguiente;
+               anterior->siguiente = capita;
+               return;  // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
+            }
+         }
+         anterior = temp;
          temp = temp->siguiente;
       }
+      // Por si he llegado al final, entonces el insertado es el más grande de todos...
       temp->siguiente = capita;
    }
 }
@@ -322,7 +338,7 @@ void graficar_capaIndividual(capa *capita)
       dot += identificador + "[label=\"" + identificador + "\"];\n";
       /*AHORA NUESTRO IDENTIFICADOR ANTIGUO >"APUNTARA"> NUEVO IDENTIFICADOR PARA EL MOMENTO DE COLOCARLO
       EN NUESTRO .DOT*/
-      dot += antiguoIdentificador + "->" + identificador + "[dir=both, constraint=false];\n";
+      dot += antiguoIdentificador + "->" + identificador + "[dir=both, constraint=true];\n";
       // ESTE PASO SOLO ME VERIFICA QUE LA VARIABLE FILAS APUNTE AL INICIO DE LA CABECERA QUE PUEDE SER
       // LA PRIMER CELDA SIN IMPORTAR SI TIENE COLOR O NO.
       filas = columnas->primerElementoCabecera;
@@ -331,7 +347,7 @@ void graficar_capaIndividual(capa *capita)
       identificadorContenido = identificador;
       while (filas != NULL)
       {
-         if (!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0)))
+         if (!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0) || (filas->color.compare("") == 0)))
          {
             antiguoIdentificadorContenido = identificadorContenido;
             identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);
@@ -369,7 +385,7 @@ void graficar_capaIndividual(capa *capita)
             if (filas->fila == filaStop)
             { // Si he llegado a la fila actual, entonces proceder� a evaluar el valor en dicha columna y fila.
                // Conectar el punto anterior, con el actual...
-               if (!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0)))
+               if (!((filas->color.compare("x") == 0) || (filas->color.compare("X") == 0) || (filas->color.compare("") == 0)))
                {
                   antiguoIdentificadorContenido = identificadorContenido;
                   identificadorContenido = "C" + std::to_string(columnas->column) + "F" + std::to_string(filas->fila);

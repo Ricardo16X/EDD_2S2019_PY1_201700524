@@ -4,6 +4,7 @@
 
 #include "ESTRUCTURAS.h"
 #include "manejo_CSV.h"
+#include "filtros.h"
 #include "mensajitos.h"
 
 void mensajeError();
@@ -24,6 +25,19 @@ int main(int argc, char const *argv[])
    std::string grafico = "";
 
    std::ofstream archivoDOT;
+
+   /*VARIABLE GLOBAL PARA EL USO DE FILTROS*/
+   cubo *nuevoFiltro = 0;
+   /* Creo que este servirá para crear la estructura doble enlazada circular
+   para guardar los elementos */
+   filtros *primer_filtro = 0;
+   //int filtroSeleccionado = 0;
+   std::string nombreCapa = "";
+
+   capa *copia = 0;
+   capa *original = 0;
+   int numeroFiltroCreado = 0;
+
    /*Men� Inicial*/
    int op = 0;
    while (op != 7)
@@ -99,8 +113,192 @@ int main(int argc, char const *argv[])
          case 3: // Filtros TODO
             if (elemento_paraTrabajo != NULL)
             {
-               /**MENU DE FILTROS**/
-               menuFILTROS();
+               op = 0;
+               while (op != 4)
+               {
+                  menuFILTROS();
+                  std::cout << "SELECCIONA UN FILTRO: ";
+                  fflush(stdin);
+                  std::cin >> op;
+                  switch (op)
+                  {
+                  case 1: // NEGATIVO
+                     op = 0;
+                     while (op != 3)
+                     {
+                        menu_opcionFiltro();
+                        std::cin >> op;
+                        switch (op)
+                        {
+                        case 1:  // FILTRO COMPLETO NEGATIVO
+                           nuevoFiltro = new cubo();
+                           copiarCubo(elemento_paraTrabajo, nuevoFiltro);
+                           // Filtro negativo Completo
+                           original = elemento_paraTrabajo->primerCapa;
+                           copia = nuevoFiltro->primerCapa;
+                           while (original != NULL)
+                           {
+                              filtroNegativo(original, copia);
+                              graficar_capaIndividual(copia);
+                              original = original->siguiente;
+                              copia = copia->siguiente;
+                           }
+                           numeroFiltroCreado++;
+                           registrarFiltro(nuevoFiltro, "___NEGATIVO_" + std::to_string(numeroFiltroCreado) + "_");
+                           break;
+                        case 2:  // FILTRO NEGATIVO POR CAPAS
+                           nuevoFiltro = new cubo();
+                           copiarCubo(elemento_paraTrabajo, nuevoFiltro);
+
+                           mostrarCapas(elemento_paraTrabajo);
+                           std::cout << "Escribe el nombre EXACTO de la capa: ";
+                           std::getline(std::cin, nombreCapa, '\n');
+                           /*aqui solamente obtengo las capas de ambos cubos para modificarlos nada mas*/
+                           if (obtenerCapa(elemento_paraTrabajo, nombreCapa) != NULL)
+                           {
+                              numeroFiltroCreado++;
+                              filtroNegativo(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
+                              registrarFiltro(nuevoFiltro, "___NEGATIVO_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                           }else{
+                              free(nuevoFiltro);
+                              std::cout << "El nombre de la capa está incorrecto, repite el proceso"<<std::endl;
+                              system("pause");
+                           }
+                           break;
+                        case 3: break;
+                        default:
+                           mensajeError();
+                           break;
+                        }
+                     }
+                  case 2: // GRAYSCALE
+                     op = 0;
+                     while (op != 3)
+                     {
+                        menu_opcionFiltro();
+                        std::cin >> op;
+                        switch (op)
+                        {
+                        case 1:
+                           /* Filtro grayscale completo */
+                           nuevoFiltro = new cubo();
+                           copiarCubo(elemento_paraTrabajo, nuevoFiltro);
+                           // Filtro negativo Completo
+                           original = elemento_paraTrabajo->primerCapa;
+                           copia = nuevoFiltro->primerCapa;
+                           while (original != NULL)
+                           {
+                              filtroGrayScale(original, copia);
+                              original = original->siguiente;
+                              copia = copia->siguiente;
+                           }
+                           break;
+                        case 2:
+                           /*Filtro grayscale por capas*/
+                           nuevoFiltro = new cubo();
+                           copiarCubo(elemento_paraTrabajo, nuevoFiltro);
+                           mostrarCapas(elemento_paraTrabajo);
+                           std::cout << "Escribe el nombre EXACTO de la capa: ";
+                           std::getline(std::cin, nombreCapa, '\n');
+                           /*aqui solamente obtengo las capas de ambos cubos para modificarlos nada mas*/
+                           if (obtenerCapa(elemento_paraTrabajo, nombreCapa) != NULL)
+                           {
+                              filtroNegativo(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
+                           }else{
+                              std::cout << "el nombre de la capa está incorrecto, repite el proceso"<<std::endl;
+                           }
+                           break;
+                        default:
+                           mensajeError();
+                           break;
+                        }
+                     }
+                  case 3: // MIRROR
+                     op = 0;
+                     while (op != 4)
+                     {
+                        menuFiltrosMirror();
+                        std::cout << "Elige una opcion : ";
+                        std::cin >> op;
+                        switch (op)
+                        {
+                        case 1: // Mirror Eje X
+                           op = 0;
+                           while (op != 3)
+                           {
+                              menu_opcionFiltro();
+                              std::cout << "Elige una opcion: ";
+                              std::cin >> op;
+                              switch (op)
+                              {
+                              case 1: // Mirror a imagen completa
+                                 break;
+                              case 2: // Mirror a capa x
+                                 break;
+                              case 3:
+                                 break;
+                              default:
+                                 mensajeError();
+                                 break;
+                              }
+                           }
+                           break;
+                        case 2: // Mirror Eje Y
+                           op = 0;
+                           while (op != 3)
+                           {
+                              menu_opcionFiltro();
+                              std::cout << "Elige una opcion: ";
+                              std::cin >> op;
+                              switch (op)
+                              {
+                              case 1: // Mirror a imagen completa
+                                 break;
+                              case 2: // Mirror a capa n
+                                 break;
+                              case 3:
+                                 break;
+                              default:
+                                 mensajeError();
+                                 break;
+                              }
+                           }
+                           break;
+                        case 3: // Mirror Eje X; Eje Y
+                           op = 0;
+                           while (op != 3)
+                           {
+                              menu_opcionFiltro();
+                              std::cout << "Elige una opcion: ";
+                              std::cin >> op;
+                              switch (op)
+                              {
+                              case 1: // Mirror a imagen completa
+                                 break;
+                              case 2: // Mirror a capa n
+                                 break;
+                              case 3:
+                                 break;
+                              default:
+                                 mensajeError();
+                                 break;
+                              }
+                           }
+                           break;
+                        case 4: // Salida del while
+                           break;
+                        default:
+                           mensajeError();
+                           break;
+                        }
+                     }
+                  case 4:
+                     break;
+                  default:
+                     mensajeError();
+                     break;
+                  }
+               }
             }
             else
             {
@@ -179,7 +377,7 @@ int main(int argc, char const *argv[])
                                           temp = temp->siguiente;
                                        }
                                        break;
-                                       case 3:
+                                    case 3:
                                        break;
                                     default:
                                        mensajeError();
@@ -243,7 +441,7 @@ int main(int argc, char const *argv[])
                                           case 2: //Grafica Lineal Row TODO
                                              grafica_linealRow(capaGraficada);
                                              break;
-                                             case 3:
+                                          case 3:
                                              break;
                                           default:
                                              mensajeError();
@@ -257,7 +455,9 @@ int main(int argc, char const *argv[])
                                        std::cerr << e.what() << '\n';
                                        mensajeError();
                                     }
-                                 }else{
+                                 }
+                                 else
+                                 {
                                     std::cout << "VUELVA A ESCRIBIR EL NOMBRE DE LA CAPA " << std::endl;
                                     system("pause");
                                  }
@@ -321,6 +521,8 @@ int main(int argc, char const *argv[])
                                  system("dot -Tpng reportes\\preOrder.dot -o reportes\\preOrder.png");
                                  system("reportes\\preOrder.png");
                                  break;
+                              case 4:
+                                 break;
                               default:
                                  mensajeError();
                                  break;
@@ -334,6 +536,9 @@ int main(int argc, char const *argv[])
                         }
                         break;
                      case 5: // 5. FILTER REPORT
+                     graficarFiltros();
+                        break;
+                     case 0:
                         break;
                      default:
                         mensajeError();
