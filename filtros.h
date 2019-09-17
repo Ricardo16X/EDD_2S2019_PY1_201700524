@@ -16,16 +16,18 @@ void filtroNegativo(capa *original, capa *nuevoFiltro);
 void filtroGrayScale(capa *original, capa *nuevoFiltro);
 std::string RGBNegativo(std::string colorRGB);
 std::string RGBGrayScale(std::string colorRGB);
+void fila_PILA(cabecera *cabecera_copia, elementoCabecera *nuevo);
+void columna_PILA(capa *capa_copia, cabecera *nuevo);
 
 void filtroNegativo(capa *original, capa *nuevoFiltro)
 {
     cabecera *temp_cab = original->primer_Cabecera;
-    cabecera* temp_copia = nuevoFiltro->primer_Cabecera;
+    cabecera *temp_copia = nuevoFiltro->primer_Cabecera;
 
     elementoCabecera *colorNegativo = 0;
-    elementoCabecera* copiaColor = 0;
-    
-    while (temp_cab != NULL)    // temp_cab contiene la cabecera original que se copiará...
+    elementoCabecera *copiaColor = 0;
+
+    while (temp_cab != NULL) // temp_cab contiene la cabecera original que se copiará...
     {
         colorNegativo = temp_cab->primerElementoCabecera;
         copiaColor = temp_copia->primerElementoCabecera;
@@ -47,10 +49,10 @@ void filtroNegativo(capa *original, capa *nuevoFiltro)
 void filtroGrayScale(capa *original, capa *nuevoFiltro)
 {
     cabecera *temp_cab = original->primer_Cabecera;
-    cabecera* temp_copia = nuevoFiltro->primer_Cabecera;
+    cabecera *temp_copia = nuevoFiltro->primer_Cabecera;
 
     elementoCabecera *colorGris = 0;
-    elementoCabecera* tempColor = 0;
+    elementoCabecera *tempColor = 0;
     while (temp_cab != NULL)
     {
         colorGris = temp_cab->primerElementoCabecera;   // original
@@ -59,7 +61,7 @@ void filtroGrayScale(capa *original, capa *nuevoFiltro)
         {
             if (!((colorGris->color.compare("x") == 0) || (colorGris->color.compare("X") == 0) || (colorGris->color.compare("") == 0)))
             {
-                tempColor->color = RGBNegativo(colorGris->color);
+                tempColor->color = RGBGrayScale(colorGris->color);
                 tempColor->fila = colorGris->fila;
             }
             colorGris = colorGris->siguiente;
@@ -90,7 +92,7 @@ std::string RGBNegativo(std::string colorRGB)
     }
     color = std::stoi(s.substr(inicio, fin - inicio));
     negativo += std::to_string(255 - color);
-
+    std::cout << negativo << "\n";
     return negativo;
 }
 
@@ -113,30 +115,37 @@ std::string RGBGrayScale(std::string colorRGB)
         color++;
     }
     colores[2] = std::stoi(s.substr(inicio, fin - inicio));
-    color = colores[0] * 0.3 + colores[1] * 0.59 + colores[2] * 0.11 + 1;
+    color = colores[0] * 0.3 + colores[1] * 0.59 + colores[2] * 0.11;
+    std::cout << color << "\n";
     grayScale = std::to_string(color) + "-" + std::to_string(color) + "-" + std::to_string(color);
     return grayScale;
 }
 
-void registrarFiltro(cubo *nuevo, std::string modo){
-    filtros* registro = new filtros();
-    if (primero == NULL)
+void registrarFiltro(filtros *&raiz, cubo *nuevo, std::string modo)
+{
+    filtros *nuevoFiltro = new filtros();
+    nuevoFiltro->nombre = modo;
+    nuevoFiltro->imagen = nuevo;
+    if (raiz == 0)
     {
-        registro->imagen = nuevo;
-        registro->nombre = modo;
-        primero = ultimo = registro;
-        ultimo->siguiente = primero;
-        primero->anterior = ultimo;
-    }else{
-        ultimo->siguiente = registro;
-        registro->anterior = ultimo;
-        ultimo = registro;
-        ultimo->siguiente = primero;
+        nuevoFiltro->siguiente = nuevoFiltro;
+        nuevoFiltro->anterior = nuevoFiltro;
+        raiz = nuevoFiltro;
+    }
+    else
+    {
+        filtros *ultimo = raiz->anterior;
+        ultimo->siguiente = nuevoFiltro;
+        nuevoFiltro->anterior = ultimo;
+
+        nuevoFiltro->siguiente = raiz;
+        raiz->anterior = nuevoFiltro;
     }
 }
 
-void graficarFiltros(){
-    filtros* temp = primero;
+void graficarFiltros(filtros *raiz)
+{
+    filtros *temp = raiz;
     std::string dot = "digraph G{\n";
     dot += "rankdir = LR;\n";
     dot += "node [shape=record];\n";
@@ -146,13 +155,13 @@ void graficarFiltros(){
         dot += "n" + std::to_string(numeroNodo) + "[shape=record, label=\"{" + temp->nombre + "}\"]\n";
         numeroNodo++;
         temp = temp->siguiente;
-    } while (temp != primero);
+    } while (temp != raiz);
 
     numeroNodo--;
     int i = 1;
     /*RELACIONES*/
-    dot += "n1 -> n" + std::to_string(numeroNodo) + "\n";
-    dot += "n" + std::to_string(numeroNodo) + " -> n1\n";
+    dot += "n1 -> n" + std::to_string(numeroNodo) + " [constraint=false]\n";
+    dot += "n" + std::to_string(numeroNodo) + " -> n1 [constraint=false]\n";
 
     while (i < numeroNodo)
     {
@@ -165,39 +174,74 @@ void graficarFiltros(){
     std::ofstream archivoDOT("reportes\\reporteFiltros.dot");
     archivoDOT << dot;
     archivoDOT.close();
-    system("dot -Tpng reporteFiltros.dot -o reporteFiltros.png");
-    system("reporteFiltros.png");
+    system("dot -Tpng reportes\\reporteFiltros.dot -o reportes\\reporteFiltros.png");
+    system("reportes\\reporteFiltros.png");
+}
+
+void mostrarFiltros(filtros *&raizFiltro)
+{
+    if (raizFiltro == 0)
+    {
+        std::cout << "SIN FILTROS APLICADOS" << std::endl;
+    }
+    else
+    {
+        filtros *temp = raizFiltro;
+        do
+        {
+            std::cout << "\t* " << temp->nombre << std::endl;
+            temp = temp->siguiente;
+        } while (temp != raizFiltro);
+    }
+}
+
+filtros *obtenerFiltro(filtros *raiz, std::string nombreFiltro)
+{
+    filtros *temp = raiz;
+    filtros *retornado = 0;
+    do
+    {
+        if (temp->nombre.compare(nombreFiltro) == 0)
+        {
+            retornado = temp;
+            break;
+        }
+        temp = temp->siguiente;
+    } while (temp != raiz);
+    return retornado;
 }
 
 /*este metodo solo me servirá para copiar el contenido de un cubo a otro.*/
-void copiarCubo(cubo* original, cubo* copia){
-    capa* capita = original->primerCapa;
+void copiarCubo(cubo *original, cubo *copia)
+{
+    capa *capita = original->primerCapa;
 
     copia->wImg = original->wImg;
     copia->hImg = original->hImg;
     copia->wPix = original->wPix;
     copia->hPix = original->hPix;
     copia->ruta = original->ruta;
+    copia->nombre = original->nombre;
 
-    cabecera* columna = 0;
+    cabecera *columna = 0;
 
-    elementoCabecera* fila = 0;
+    elementoCabecera *fila = 0;
     /*ELEMENTOS NUEVOS*/
-    while (capita != NULL)  //  Comenzamos con las capas de la imagen.
+    while (capita != NULL) //  Comenzamos con las capas de la imagen.
     {
         columna = capita->primer_Cabecera;
-        capa* nuevaCapa = new capa();
+        capa *nuevaCapa = new capa();
         nuevaCapa->nombreCapa = capita->nombreCapa;
         nuevaCapa->numeroCapa = capita->numeroCapa;
         while (columna != NULL) //  Comenzamos con las columnas de las capas
         {
             fila = columna->primerElementoCabecera;
-            cabecera* nuevaColumna = new cabecera();
+            cabecera *nuevaColumna = new cabecera();
             nuevaColumna->column = columna->column;
 
-            while (fila != NULL)    // Comenzamos con las filas de las columnas.
+            while (fila != NULL) // Comenzamos con las filas de las columnas.
             {
-                elementoCabecera* nuevaFila = new elementoCabecera();
+                elementoCabecera *nuevaFila = new elementoCabecera();
                 nuevaFila->color = fila->color;
                 nuevaFila->fila = fila->fila;
 
@@ -210,6 +254,316 @@ void copiarCubo(cubo* original, cubo* copia){
         }
         agregarCapa(copia, nuevaCapa);
         capita = capita->siguiente;
+    }
+}
+
+/*FILTRO EJE X*/
+/*Filtro eje X a cubo completo
+que consistirá en insertar las columnas (cabeceras) en PILA*/
+void filtro_ejeX(cubo *original, cubo *copia)
+{
+    capa *capita = original->primerCapa;
+
+    copia->wImg = original->wImg;
+    copia->hImg = original->hImg;
+    copia->wPix = original->wPix;
+    copia->hPix = original->hPix;
+    copia->ruta = original->ruta;
+    copia->nombre = original->nombre;
+
+    cabecera *columna = 0;
+
+    elementoCabecera *fila = 0;
+    /*ELEMENTOS NUEVOS*/
+    while (capita != NULL) //  Comenzamos con las capas de la imagen.
+    {
+        columna = capita->primer_Cabecera;
+        capa *nuevaCapa = new capa();
+        nuevaCapa->nombreCapa = capita->nombreCapa;
+        nuevaCapa->numeroCapa = capita->numeroCapa;
+        while (columna != NULL) //  Comenzamos con las columnas de las capas
+        {
+            fila = columna->primerElementoCabecera;
+            cabecera *nuevaColumna = new cabecera();
+            nuevaColumna->column = columna->column;
+
+            while (fila != NULL) // Comenzamos con las filas de las columnas.
+            {
+                elementoCabecera *nuevaFila = new elementoCabecera();
+                nuevaFila->color = fila->color;
+                nuevaFila->fila = fila->fila;
+
+                agregarFila(nuevaColumna, nuevaFila);
+                fila = fila->siguiente;
+            }
+
+            columna_PILA(nuevaCapa, nuevaColumna);
+            columna = columna->siguiente;
+        }
+        agregarCapa(copia, nuevaCapa);
+        capita = capita->siguiente;
+    }
+}
+
+void filtro_ejeX_capa(capa *original, capa *copia)
+{
+    /*PROCESO DE BORRADO DE CAPA*/
+    cabecera *aux = 0;
+    elementoCabecera *ec_aux = 0;
+    while (copia->primer_Cabecera != NULL)
+    {
+        aux = copia->primer_Cabecera;
+        ec_aux = aux->primerElementoCabecera;
+        while (aux->primerElementoCabecera != NULL)
+        {
+            ec_aux = aux->primerElementoCabecera;
+            aux->primerElementoCabecera = ec_aux->siguiente;
+            delete ec_aux;
+        }
+        copia->primer_Cabecera = aux->siguiente;
+        delete aux;
+    }
+    // Reinicio de la primera columna a 0
+    copia->primer_Cabecera = nullptr;
+    /*PROCESO DE LLENADO DE CAPA CON EL FILTRO APLICADO*/
+    cabecera *columna = original->primer_Cabecera;
+    elementoCabecera *fila = 0;
+    while (columna != NULL) //  Comenzamos con las columnas de las capas
+    {
+        fila = columna->primerElementoCabecera;
+        cabecera *nuevaColumna = new cabecera();
+        nuevaColumna->column = columna->column;
+
+        while (fila != NULL) // Comenzamos con las filas de las columnas.
+        {
+            elementoCabecera *nuevaFila = new elementoCabecera();
+            nuevaFila->color = fila->color;
+            nuevaFila->fila = fila->fila;
+
+            agregarFila(nuevaColumna, nuevaFila);
+            fila = fila->siguiente;
+        }
+        columna_PILA(copia, nuevaColumna);
+        columna = columna->siguiente;
+    }
+}
+
+void columna_PILA(capa *capa_copia, cabecera *nuevo)
+{
+    if (capa_copia->primer_Cabecera == NULL)
+    {
+        capa_copia->primer_Cabecera = nuevo;
+    }
+    else
+    {
+        /*EL NUEVO ELEMENTO APUNTA A primer_Cabecera*/
+        // |1| -> null
+        // (nuevo)2 -> (inicio)|1| -> null
+        nuevo->siguiente = capa_copia->primer_Cabecera;
+        // (inicio)|2| -> 1 -> null
+        capa_copia->primer_Cabecera = nuevo;
+    }
+}
+/*FILTRO EJE Y*/
+/*Filtro eje y a cubo completo
+que consistirá en insertar las filas (elementosCabecera) en PILA*/
+void filtro_ejeY(cubo *original, cubo *copia)
+{
+    capa *capita = original->primerCapa;
+
+    copia->wImg = original->wImg;
+    copia->hImg = original->hImg;
+    copia->wPix = original->wPix;
+    copia->hPix = original->hPix;
+    copia->ruta = original->ruta;
+    copia->nombre = original->nombre;
+
+    cabecera *columna = 0;
+
+    elementoCabecera *fila = 0;
+    /*ELEMENTOS NUEVOS*/
+    while (capita != NULL) //  Comenzamos con las capas de la imagen.
+    {
+        columna = capita->primer_Cabecera;
+        capa *nuevaCapa = new capa();
+        nuevaCapa->nombreCapa = capita->nombreCapa;
+        nuevaCapa->numeroCapa = capita->numeroCapa;
+        while (columna != NULL) //  Comenzamos con las columnas de las capas
+        {
+            fila = columna->primerElementoCabecera;
+            cabecera *nuevaColumna = new cabecera();
+            nuevaColumna->column = columna->column;
+
+            while (fila != NULL) // Comenzamos con las filas de las columnas.
+            {
+                elementoCabecera *nuevaFila = new elementoCabecera();
+                nuevaFila->color = fila->color;
+                nuevaFila->fila = fila->fila;
+
+                fila_PILA(nuevaColumna, nuevaFila);
+                fila = fila->siguiente;
+            }
+
+            agregarCabecera(nuevaCapa, nuevaColumna);
+            columna = columna->siguiente;
+        }
+        agregarCapa(copia, nuevaCapa);
+        capita = capita->siguiente;
+    }
+}
+
+void fila_PILA(cabecera *columna_copia, elementoCabecera *nueva_fila)
+{
+    if (columna_copia->primerElementoCabecera == NULL)
+    {
+        columna_copia->primerElementoCabecera = nueva_fila;
+    }
+    else
+    {
+        /*EL NUEVO ELEMENTO APUNTA A primer_Cabecera*/
+        // |1| -> null
+        // (nuevo)2 -> (inicio)|1| -> null
+        nueva_fila->siguiente = columna_copia->primerElementoCabecera;
+        // (inicio)|2| -> 1 -> null
+        columna_copia->primerElementoCabecera = nueva_fila;
+    }
+}
+
+/*FILTRO EJE Y A CAPA*/
+/*Este filtro consistirá en borrar toda la capa para luego
+llenarlo nuevamente con los valores correspondientes.*/
+void filtro_ejeY_capa(capa *original, capa *copia)
+{
+    /*PROCESO DE BORRADO DE CAPA*/
+    cabecera *aux = 0;
+    elementoCabecera *ec_aux = 0;
+    while (copia->primer_Cabecera != NULL)
+    {
+        aux = copia->primer_Cabecera;
+        ec_aux = aux->primerElementoCabecera;
+        while (aux->primerElementoCabecera != NULL)
+        {
+            ec_aux = aux->primerElementoCabecera;
+            aux->primerElementoCabecera = ec_aux->siguiente;
+            delete ec_aux;
+        }
+        copia->primer_Cabecera = aux->siguiente;
+        delete aux;
+    }
+    // Reinicio de la primera columna a 0
+    copia->primer_Cabecera = nullptr;
+    /*PROCESO DE LLENADO DE CAPA CON EL FILTRO APLICADO*/
+    cabecera *columna = original->primer_Cabecera;
+    elementoCabecera *fila = 0;
+    while (columna != NULL) //  Comenzamos con las columnas de las capas
+    {
+        fila = columna->primerElementoCabecera; // Original
+        cabecera *nuevaColumna = new cabecera();    // Copia
+        nuevaColumna->column = columna->column;
+
+        while (fila != NULL) // Comenzamos con las filas de las columnas originales.
+        {
+            elementoCabecera *nuevaFila = new elementoCabecera();
+            nuevaFila->color = fila->color;
+            nuevaFila->fila = fila->fila;
+
+            fila_PILA(nuevaColumna, nuevaFila);
+            fila = fila->siguiente;
+        }
+        agregarCabecera(copia, nuevaColumna);
+        columna = columna->siguiente;
+    }
+}
+/*FILTRO MIRROR COMPLETO*/
+/*Filtro en ambos ejes a cubo completo
+que consistirá en insertar las columnas en PILA
+y también insertar las filas en PILA*/
+void mirror_EjeX_EjeY(cubo *original, cubo *copia)
+{
+    capa *capita = original->primerCapa;
+
+    copia->wImg = original->wImg;
+    copia->hImg = original->hImg;
+    copia->wPix = original->wPix;
+    copia->hPix = original->hPix;
+    copia->ruta = original->ruta;
+    copia->nombre = original->nombre;
+
+    cabecera *columna = 0;
+
+    elementoCabecera *fila = 0;
+    /*ELEMENTOS NUEVOS*/
+    while (capita != NULL) //  Comenzamos con las capas de la imagen.
+    {
+        columna = capita->primer_Cabecera;
+        capa *nuevaCapa = new capa();
+        nuevaCapa->nombreCapa = capita->nombreCapa;
+        nuevaCapa->numeroCapa = capita->numeroCapa;
+        while (columna != NULL) //  Comenzamos con las columnas de las capas
+        {
+            fila = columna->primerElementoCabecera;
+            cabecera *nuevaColumna = new cabecera();
+            nuevaColumna->column = columna->column;
+
+            while (fila != NULL) // Comenzamos con las filas de las columnas.
+            {
+                elementoCabecera *nuevaFila = new elementoCabecera();
+                nuevaFila->color = fila->color;
+                nuevaFila->fila = fila->fila;
+
+                fila_PILA(nuevaColumna, nuevaFila);
+                fila = fila->siguiente;
+            }
+
+            columna_PILA(nuevaCapa, nuevaColumna);
+            columna = columna->siguiente;
+        }
+        agregarCapa(copia, nuevaCapa);
+        capita = capita->siguiente;
+    }
+}
+
+/*FILTRO MIRROR A CAPA*/
+void mirror_capa(capa *original, capa *copia)
+{
+    /*PROCESO DE BORRADO DE CAPA*/
+    cabecera *aux = 0;
+    elementoCabecera *ec_aux = 0;
+    while (copia->primer_Cabecera != NULL)
+    {
+        aux = copia->primer_Cabecera;
+        ec_aux = aux->primerElementoCabecera;
+        while (aux->primerElementoCabecera != NULL)
+        {
+            ec_aux = aux->primerElementoCabecera;
+            aux->primerElementoCabecera = ec_aux->siguiente;
+            delete ec_aux;
+        }
+        copia->primer_Cabecera = aux->siguiente;
+        delete aux;
+    }
+    // Reinicio de la primera columna a 0
+    copia->primer_Cabecera = nullptr;
+    /*PROCESO DE LLENADO DE CAPA CON EL FILTRO APLICADO*/
+    cabecera *columna = original->primer_Cabecera;
+    elementoCabecera *fila = 0;
+    while (columna != NULL) //  Comenzamos con las columnas de las capas
+    {
+        fila = columna->primerElementoCabecera;
+        cabecera *nuevaColumna = new cabecera();
+        nuevaColumna->column = columna->column;
+
+        while (fila != NULL) // Comenzamos con las filas de las columnas.
+        {
+            elementoCabecera *nuevaFila = new elementoCabecera();
+            nuevaFila->color = fila->color;
+            nuevaFila->fila = fila->fila;
+
+            fila_PILA(nuevaColumna, nuevaFila);
+            fila = fila->siguiente;
+        }
+        columna_PILA(copia, nuevaColumna);
+        columna = columna->siguiente;
     }
 }
 

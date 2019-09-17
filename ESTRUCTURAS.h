@@ -361,10 +361,17 @@ void graficar_capaIndividual(capa *capita)
    rank_same_columnas += "}\n";
 
    /**RECORRIDO DE FILA HORIZONTAL**/
-   int filaStop = 1;
+   bool disminuir = false;
+   int filaStop = capita->primer_Cabecera->primerElementoCabecera->fila;
+   if (filaStop == 1)   // AUMENTAR
+   {
+      disminuir = false;
+   }else{   // DISMINUIR
+      disminuir = true;
+   }
+   
    identificador = "CAPA";
    bool salir = true;
-
    while (salir)
    { // Me indicar� cuando salir, media vez alcance el punto m�ximo de filas permitidas.
       columnas = capita->primer_Cabecera;
@@ -402,7 +409,12 @@ void graficar_capaIndividual(capa *capita)
       {
          /**AL MOMENTO DE ACABAR LOS ENLACES DE LAS FILAS, ENTONCES CIERRO EL RANK_SAME_FILAS PARA QUE SOLO ME QUEDEN SEPARADAS
          LAS FILAS QUE DESEO GRAFICAR.**/
-         filaStop++;
+         if (disminuir)
+         {
+            filaStop--;
+         }else{
+            filaStop++;
+         }
       }
       else
       {
