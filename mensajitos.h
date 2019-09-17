@@ -24,7 +24,8 @@ void menuFILTROS()
    std::cout << "1. NEGATIVO" << std::endl;
    std::cout << "2. ESCALA DE GRISES" << std::endl;
    std::cout << "3. ESPEJO" << std::endl;
-   std::cout << "4. REGRESAR" << std::endl;
+   std::cout << "4. COLLAGE\n";
+   std::cout << "5. REGRESAR" << std::endl;
    /*pronto nuevos filtros*/
 }
 

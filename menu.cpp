@@ -2,12 +2,14 @@
 #include <string>
 #include <fstream>
 
+#include "crearImagen.h"
 #include "ESTRUCTURAS.h"
 #include "manejo_CSV.h"
 #include "filtros.h"
 #include "mensajitos.h"
 
 void mensajeError();
+void print(std::string);
 
 int main(int argc, char const *argv[])
 {
@@ -37,6 +39,9 @@ int main(int argc, char const *argv[])
    filtros *raizFiltros = 0;
    std::string nombreFiltro = "";
    cubo *cuboTemporal = 0;
+
+   /*Variables para el collage*/
+   int x = 0, y = 0;
 
    /*Men� Inicial*/
    int op = 0;
@@ -100,6 +105,12 @@ int main(int argc, char const *argv[])
                   std::cout << "ANCHO PIXEL : " << elemento_paraTrabajo->wPix << std::endl;
                   std::cout << "ALTO PIXEL : " << elemento_paraTrabajo->hPix << std::endl
                             << std::endl;
+                  if (raizFiltros != NULL)
+                  {
+                     borrarFiltros(raizFiltros);
+                     raizFiltros = nullptr;
+                     numeroFiltroCreado = 0;
+                  }
                }
                else
                {
@@ -114,7 +125,7 @@ int main(int argc, char const *argv[])
             if (elemento_paraTrabajo != NULL)
             {
                op = 0;
-               while (op != 4)
+               while (op != 5)
                {
                   menuFILTROS();
                   std::cout << "SELECCIONA UN FILTRO: ";
@@ -383,7 +394,42 @@ int main(int argc, char const *argv[])
                         }
                      }
                      break;
-                  case 4:
+                  case 4: // COLLAGE
+                     system("cls");
+                     try
+                     {
+                        print("Ingrese el numero de repeticiones en X");
+                        fflush(stdin);
+                        std::cin >> x;
+                        if (x <= 0)
+                        {
+                           x = 1;
+                        }
+                        print("Ingrese el numero de repeticiones en Y");
+                        fflush(stdin);
+                        std::cin >> y;
+                        if (x <= 0)
+                        {
+                           x = 1;
+                        }
+                        nuevoFiltro = new cubo();
+                        if (x == 1 && y == 1)
+                        {
+                           copiarCubo(elemento_paraTrabajo, nuevoFiltro);
+                           numeroFiltroCreado++;
+                        }
+                        else
+                        {
+                           collage(elemento_paraTrabajo, nuevoFiltro, x, y);
+                           numeroFiltroCreado++;
+                        }
+                        registrarFiltro(raizFiltros, nuevoFiltro, "\t" + std::to_string(numeroFiltroCreado) + ". Collage");
+                     }
+                     catch (const std::exception &e)
+                     {
+                        std::cerr << e.what() << '\n';
+                        mensajeError();
+                     }
                      break;
                   default:
                      mensajeError();
@@ -400,10 +446,75 @@ int main(int argc, char const *argv[])
          case 4: // Edicion Manual TODO
             break;
          case 5: // Exportar Imagen TODO
+            if (elemento_paraTrabajo == NULL)
+            {
+               system("cls");
+               std::cout << "NO HAY IMAGEN SELECCIONADA" << std::endl;
+               system("pause");
+            }
+            else
+            {
+               if (raizFiltros == NULL)
+               {
+                  generarImagen(elemento_paraTrabajo);
+               }
+               else
+               {
+                  op = 0;
+                  while (op != 3)
+                  {
+                     system("cls");
+                     std::cout << "EXPORTAR IMAGEN---\n";
+                     std::cout << "1. ORIGINAL\n";
+                     std::cout << "2. FILTROS\n";
+                     std::cout << "3. Salir\n";
+                     std::cout << "Elige una opcion: ";
+                     fflush(stdin);
+                     std::cin >> op;
+                     filtros *imagen = 0;
+                     switch (op)
+                     {
+                     case 1:
+                        generarImagen(elemento_paraTrabajo);
+                        break;
+                     case 2:
+                        if (raizFiltros != NULL)
+                        {
+                           std::cout << "\tEXPORTAR FILTRO\n";
+                           mostrarFiltros(raizFiltros);
+                           std::cout << "ESCRIBE EL NOMBRE COMPLETO DEL FILTRO: ";
+                           fflush(stdin);
+                           std::getline(std::cin, nombreArchivo, '\n');
+                           imagen = obtenerFiltro(raizFiltros, nombreArchivo);
+                           if (imagen != NULL)
+                           {
+                              generarImagen(imagen->imagen);
+                           }
+                           else
+                           {
+                              std::cout << "VUELVE A ESCRIBIR EL NOMBRE DEL FILTRO...\n";
+                              system("pause");
+                           }
+                        }
+                        else
+                        {
+                           std::cout << "NO HAS APLICADO NINGUN FILTRO DISPONIBLE" << std::endl;
+                           system("pause");
+                        }
+                        break;
+                     case 3:
+                        break;
+                     default:
+                        break;
+                     }
+                  }
+               }
+            }
             break;
          case 6: // REPORTES
             if (raiz != NULL)
             {
+               op = 1;
                while (op != 0)
                {
                   try
@@ -429,7 +540,7 @@ int main(int argc, char const *argv[])
                            reporteMatrices = obtenerCopia(raiz, nombreArchivo);
                            if (reporteMatrices != NULL)
                            {
-                              op = 1;
+                              op = 0;
                               while (op != 3)
                               {
                                  try
@@ -636,6 +747,7 @@ int main(int argc, char const *argv[])
                            system("cls");
                            std::cout << "1. Reporte Todos los Filtros Aplicados" << std::endl;
                            std::cout << "2. Reporte de filtro Invidual" << std::endl;
+                           std::cout << "3. Regresar....\n";
                            std::cout << "Elige una opcion: ";
                            fflush(stdin);
                            std::cin >> op;
@@ -656,6 +768,7 @@ int main(int argc, char const *argv[])
                                  op = 0;
                                  while (op != 3)
                                  {
+                                    system("cls");
                                     std::cout << "1. Imagen Completa" << std::endl;
                                     std::cout << "2. Por capas" << std::endl;
                                     std::cout << "3. Salir" << std::endl;
@@ -697,6 +810,7 @@ int main(int argc, char const *argv[])
                               }
                               break;
                            default:
+                              mensajeError();
                               break;
                            }
                         }
@@ -751,4 +865,9 @@ void mensajeError()
    std::cin.clear();
    std::cin.ignore(1000, '\n');
    system("pause");
+}
+
+void print(std::string message)
+{
+   std::cout << message << std::endl;
 }

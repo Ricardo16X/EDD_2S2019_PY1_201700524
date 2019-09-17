@@ -269,16 +269,21 @@ void agregarCapa(cubo *cubito, capa *capita)
 
       int insertado = capita->numeroCapa;
 
-      while(temp->siguiente != NULL){
-         if(insertado < temp->numeroCapa){
-            if(temp == cubito->primerCapa){  /**PRIMERO EVALUO SI ES EL PRIMERO DE LA LISTA**/
+      while (temp->siguiente != NULL)
+      {
+         if (insertado < temp->numeroCapa)
+         {
+            if (temp == cubito->primerCapa)
+            { /**PRIMERO EVALUO SI ES EL PRIMERO DE LA LISTA**/
                capita->siguiente = cubito->primerCapa;
                cubito->primerCapa = capita;
-               return;  // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
-            }else{   /**ESTOY INSERTANDO ENTRE 2 NODOS, POR LO CUAL DEBO CNOCER CUAL ES EL ACTUAL Y ANTERIOR**/
+               return; // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
+            }
+            else
+            { /**ESTOY INSERTANDO ENTRE 2 NODOS, POR LO CUAL DEBO CNOCER CUAL ES EL ACTUAL Y ANTERIOR**/
                capita->siguiente = anterior->siguiente;
                anterior->siguiente = capita;
-               return;  // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
+               return; // el return me servirá para romper o interrumpir el insertado cuando ya lo he hecho.
             }
          }
          anterior = temp;
@@ -363,13 +368,15 @@ void graficar_capaIndividual(capa *capita)
    /**RECORRIDO DE FILA HORIZONTAL**/
    bool disminuir = false;
    int filaStop = capita->primer_Cabecera->primerElementoCabecera->fila;
-   if (filaStop == 1)   // AUMENTAR
+   if (filaStop == 1) // AUMENTAR
    {
       disminuir = false;
-   }else{   // DISMINUIR
+   }
+   else
+   { // DISMINUIR
       disminuir = true;
    }
-   
+
    identificador = "CAPA";
    bool salir = true;
    while (salir)
@@ -412,7 +419,9 @@ void graficar_capaIndividual(capa *capita)
          if (disminuir)
          {
             filaStop--;
-         }else{
+         }
+         else
+         {
             filaStop++;
          }
       }
