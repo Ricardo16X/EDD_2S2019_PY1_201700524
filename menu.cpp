@@ -443,9 +443,38 @@ int main(int argc, char const *argv[])
             }
             system("pause");
             break;
-         case 4: // Edicion Manual TODO
+         case 4: // Edicion Manual
+            system("cls");
+            if (elemento_paraTrabajo == NULL)
+            {
+                  
+                  print("NO HAY IMAGEN SELECCIONADA");
+                  system("pause");
+            }else
+            {
+               op = 0;
+               while(op != 3){
+                  print("1. Imagen Original");
+                  print("2. Filtros");
+                  std::cin >> op;
+                  switch (op)
+                  {
+                  case 1:
+                     
+                     break;
+                     case 2:
+                     break;
+                  case 3:
+
+                  break;
+                  default:
+                     mensajeError();
+                     break;
+                  }
+               }
+            }
             break;
-         case 5: // Exportar Imagen TODO
+         case 5: // Exportar Imagen
             if (elemento_paraTrabajo == NULL)
             {
                system("cls");

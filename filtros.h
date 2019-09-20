@@ -646,4 +646,9 @@ void collage(cubo* original, cubo* copia, int rep_columnas, int rep_filas){
     }
 }
 
+void modificar(int columna, int fila, cubo* &imagen)
+{
+    
+}
+
 #endif // FILTROS_H_INCLUDED
