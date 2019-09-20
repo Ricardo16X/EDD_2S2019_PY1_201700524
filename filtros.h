@@ -88,7 +88,9 @@ std::string RGBNegativo(std::string colorRGB)
         if (color <= 255)
         {
             negativo += std::to_string(255 - color) + "-";
-        }else{
+        }
+        else
+        {
             negativo += std::to_string(0) + "-";
         }
         inicio = fin + delim.length();
@@ -98,7 +100,9 @@ std::string RGBNegativo(std::string colorRGB)
     if (color <= 255)
     {
         negativo += std::to_string(255 - color);
-    }else{
+    }
+    else
+    {
         negativo += std::to_string(0);
     }
     return negativo;
@@ -466,8 +470,8 @@ void filtro_ejeY_capa(capa *original, capa *copia)
     elementoCabecera *fila = 0;
     while (columna != NULL) //  Comenzamos con las columnas de las capas
     {
-        fila = columna->primerElementoCabecera; // Original
-        cabecera *nuevaColumna = new cabecera();    // Copia
+        fila = columna->primerElementoCabecera;  // Original
+        cabecera *nuevaColumna = new cabecera(); // Copia
         nuevaColumna->column = columna->column;
 
         while (fila != NULL) // Comenzamos con las filas de las columnas originales.
@@ -576,10 +580,11 @@ void mirror_capa(capa *original, capa *copia)
     }
 }
 
-void borrarFiltros(filtros *raiz){
+void borrarFiltros(filtros *raiz)
+{
     raiz->anterior->siguiente = nullptr;
     raiz->anterior = nullptr;
-    filtros* aux = 0;
+    filtros *aux = 0;
     while (raiz != NULL)
     {
         aux = raiz;
@@ -589,23 +594,38 @@ void borrarFiltros(filtros *raiz){
     raiz = nullptr;
 }
 
-void collage(cubo* original, cubo* copia, int rep_columnas, int rep_filas){
-    capa* copia_capa = original->primerCapa;
-    cabecera* columna_copia = 0;
-    elementoCabecera* fila_copia = 0;
-    /*PASANDO INFORMACION DE CUBO A CUBO*/
-    copia->wImg = original->wImg*rep_columnas;
-    copia->hImg = original->hImg*rep_filas;
-    copia->wPix = original->wPix;
-    copia->hPix = original->hPix;
-    copia->nombre = original->nombre;
-    copia->ruta = original->ruta;
+void collage(cubo *original, cubo *copia, int rep_columnas, int rep_filas)
+{
+    capa *copia_capa = original->primerCapa;
+    cabecera *columna_copia = 0;
+    elementoCabecera *fila_copia = 0;
 
+    /*REDEFINIENDO DIMENSIONES A IMAGEN DE COLLAGE*/
+    if (original->wImg * original->wPix * rep_columnas > 1500)
+    {
+        // Redimensionando alto y ancho, para hacerlo visible
+        // en pantalla.
+        copia->wImg = (int)(original->wImg*rep_columnas);
+        copia->hImg = (int)(original->hImg*rep_filas);
+        copia->wPix = (int)(original->wPix/rep_columnas);
+        copia->hPix = (int)(original->hPix/rep_filas);
+        copia->nombre = original->nombre;
+        copia->ruta = original->ruta;
+    }
+    else
+    {
+        copia->wImg = original->wImg * rep_columnas;
+        copia->hImg = original->hImg * rep_filas;
+        copia->wPix = original->wPix;
+        copia->hPix = original->hPix;
+        copia->nombre = original->nombre;
+        copia->ruta = original->ruta;
+    }
 
     /*Estas variables solo me servirán para poder incrementar "manualmente"
     El numero de fila de la nueva fila en el cubo copia.*/
     int index_fila = 0, index_columna = 0;
-    capa* nuevaCapa = 0;
+    capa *nuevaCapa = 0;
     while (copia_capa != NULL)
     {
         nuevaCapa = new capa();
@@ -616,20 +636,20 @@ void collage(cubo* original, cubo* copia, int rep_columnas, int rep_filas){
             columna_copia = copia_capa->primer_Cabecera;
             while (columna_copia != NULL)
             {
-                cabecera* nuevaColumna = new cabecera();
+                cabecera *nuevaColumna = new cabecera();
                 index_columna++;
                 nuevaColumna->column = index_columna;
                 for (int i = 0; i < rep_filas; i++) /*ESTE FOR ME AYUDARÁ A REALIZAR LAS REPETICIONES DE LAS FILAS DE MI COLLAGE (EJE Y)*/
-                {   
+                {
                     fila_copia = columna_copia->primerElementoCabecera;
                     while (fila_copia != NULL)
                     {
-                        elementoCabecera* nuevaFila = new elementoCabecera();
+                        elementoCabecera *nuevaFila = new elementoCabecera();
                         nuevaFila->color = fila_copia->color;
                         /*Aqui uso para el de fila*/
                         index_fila++;
                         nuevaFila->fila = index_fila;
-                        
+
                         agregarFila(nuevaColumna, nuevaFila);
 
                         fila_copia = fila_copia->siguiente;
@@ -646,9 +666,31 @@ void collage(cubo* original, cubo* copia, int rep_columnas, int rep_filas){
     }
 }
 
-void modificar(int columna, int fila, cubo* &imagen)
+void modificar(int columna, int fila, capa *&imagen, int rojo, int verde, int azul)
 {
-    
+    cabecera *aux_cabecera = imagen->primer_Cabecera;
+    elementoCabecera *aux_fila = 0;
+    while (aux_cabecera != NULL)
+    {
+        if (aux_cabecera->column == columna)
+        {
+            aux_fila = aux_cabecera->primerElementoCabecera;
+            while (aux_fila != NULL)
+            {
+                if (aux_fila->fila == fila)
+                {
+                    aux_fila->color = std::to_string(rojo) + "-" + std::to_string(verde) + "-" + std::to_string(azul);
+                    std::cout << "Se ha modificado la coordenada (" << std::to_string(columna) << "," << std::to_string(fila) + "):" << std::endl;
+                    return;
+                }
+                aux_fila = aux_fila->siguiente;
+            }
+            std::cout << "Quiza el numero de fila es mayor al numero de filas de la capa: " << std::endl;
+            break;
+        }
+        aux_cabecera = aux_cabecera->siguiente;
+    }
+    std::cout << "Quiza el numero de columna es mayor al numero de columnas de la capa: " << std::endl;
 }
 
 #endif // FILTROS_H_INCLUDED

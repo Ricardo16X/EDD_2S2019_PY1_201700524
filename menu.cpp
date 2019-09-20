@@ -37,11 +37,14 @@ int main(int argc, char const *argv[])
 
    int numeroFiltroCreado = 0;
    filtros *raizFiltros = 0;
+   filtros *copia_filtro = 0;
    std::string nombreFiltro = "";
    cubo *cuboTemporal = 0;
 
    /*Variables para el collage*/
    int x = 0, y = 0;
+   /*Variables para la modificacion de colores*/
+   int rojo = 0, verde = 0, azul = 0;
 
    /*Men� Inicial*/
    int op = 0;
@@ -447,26 +450,96 @@ int main(int argc, char const *argv[])
             system("cls");
             if (elemento_paraTrabajo == NULL)
             {
-                  
-                  print("NO HAY IMAGEN SELECCIONADA");
-                  system("pause");
-            }else
+               print("NO HAY IMAGEN SELECCIONADA");
+               system("pause");
+            }
+            else
             {
                op = 0;
-               while(op != 3){
+               while (op != 3)
+               {
                   print("1. Imagen Original");
                   print("2. Filtros");
                   std::cin >> op;
                   switch (op)
                   {
                   case 1:
-                     
+                     capaGraficada = 0;
+                     mostrarCapas(elemento_paraTrabajo);
+                     print("Ingrese el nombre de la capa: ");
+                     fflush(stdin);
+                     std::getline(std::cin, nombreCapa, '\n');
+                     capaGraficada = obtenerCapa(elemento_paraTrabajo, nombreCapa);
+                     if (capaGraficada != NULL)
+                     {
+                        print("");
+                        print("Ingrese el valor de la coordenada X: ");
+                        fflush(stdin);
+                        std::cin >> x;
+                        print("ingrese el valor de la coordenada Y: ");
+                        fflush(stdin);
+                        std::cin >> y;
+                        print("Ingrese un valor para Rojo (0-255): ");
+                        fflush(stdin);
+                        std::cin >> rojo;
+                        print("Ingrese un valor para Verde (0-255): ");
+                        fflush(stdin);
+                        std::cin >> verde;
+                        print("Ingrese un valor para Azul (0-255): ");
+                        fflush(stdin);
+                        std::cin >> azul;
+                        modificar(x, y, capaGraficada, rojo, azul, verde);
+                     }
+                     else
+                     {
+                        print("NO ENCONTRE LA CAPA SELECCIONADA " + nombreCapa);
+                        system("pause");
+                     }
                      break;
-                     case 2:
+                  case 2:
+                     capaGraficada = 0;
+                     mostrarFiltros(raizFiltros);
+                     print("Ingrese el nombre del filtro: ");
+                     fflush(stdin);
+                     std::getline(std::cin, nombreFiltro, '\n');
+                     copia_filtro = obtenerFiltro(raizFiltros, nombreFiltro);
+                     if (copia_filtro != NULL)
+                     {
+                        mostrarCapas(copia_filtro->imagen);
+                        print("Escriba el nombre de la capa a modificar: ");
+                        fflush(stdin);
+                        std::getline(std::cin, nombreCapa, '\n');
+                        capaGraficada = obtenerCapa(copia_filtro->imagen, nombreCapa);
+                        if (capaGraficada != NULL)
+                        {
+                           print("");
+                           print("Ingrese el valor de la coordenada X: ");
+                           fflush(stdin);
+                           std::cin >> x;
+                           print("ingrese el valor de la coordenada Y: ");
+                           fflush(stdin);
+                           std::cin >> y;
+                           print("Ingrese un valor para Rojo (0-255): ");
+                           fflush(stdin);
+                           std::cin >> rojo;
+                           print("Ingrese un valor para Verde (0-255): ");
+                           fflush(stdin);
+                           std::cin >> verde;
+                           print("Ingrese un valor para Azul (0-255): ");
+                           fflush(stdin);
+                           std::cin >> azul;
+                           modificar(x, y, capaGraficada, rojo, azul, verde);
+                        }
+                        else
+                        {
+                           print("NO ENCONTRE LA CAPA SELECCIONADA " + nombreCapa);
+                           system("pause");
+                        }
+                     }
                      break;
                   case 3:
-
-                  break;
+                     // Salir
+                     break;
                   default:
                      mensajeError();
                      break;
