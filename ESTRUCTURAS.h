@@ -312,6 +312,7 @@ capa *obtenerCapa(cubo *cubito, std::string nombreCapa)
 
 void graficar_capaIndividual(capa *capita)
 {
+   std::cout << "\n...GENERANDO REPORTE MATRIZ" << std::endl;
    std::string rank_same_columnas = "";
    std::string rank_same_filas = "";
    // Variables auxiliares
@@ -451,7 +452,7 @@ void graficar_capaIndividual(capa *capita)
 void mostrarCapas(ARBOL cubo)
 {
    capa *temp = cubo->primerCapa;
-   std::cout << "_____LISTA DE CAPAS_____" << std::endl;
+   std::cout << "###  LISTA DE CAPAS  ###" << std::endl;
    while (temp != NULL)
    {
       std::cout << "*" << temp->nombreCapa << std::endl;
@@ -461,6 +462,7 @@ void mostrarCapas(ARBOL cubo)
 
 void grafica_linealColumn(capa *capita)
 {
+   std::cout << "\n...GENERANDO REPORTE LINEALIZACION POR COLUMNAS" << std::endl;
    /**IRE METIENDO LOS DATOS POR COLUMNAS**/
    cabecera *columna = capita->primer_Cabecera;
    elementoCabecera *fila;
@@ -498,6 +500,7 @@ void grafica_linealColumn(capa *capita)
 
 void grafica_linealRow(capa *capita)
 {
+   std::cout << "\n...GENERANDO REPORTE LINEALIZACION POR FILAS" << std::endl;
    std::string dot = "digraph G{\n rankdir=LR node[shape=rectangle];";
    std::string antiguo = "", nuevo = "\"INICIO\"";
 

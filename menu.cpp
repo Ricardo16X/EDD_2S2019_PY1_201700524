@@ -180,7 +180,7 @@ int main(int argc, char const *argv[])
                            else
                            {
                               free(nuevoFiltro);
-                              std::cout << "El nombre de la capa está incorrecto, repite el proceso..." << std::endl;
+                              std::cout << "El nombre de la capa esta incorrecto, repite el proceso..." << std::endl;
                               system("pause");
                            }
                            break;
@@ -235,7 +235,7 @@ int main(int argc, char const *argv[])
                            else
                            {
                               free(nuevoFiltro);
-                              std::cout << "El nombre de la capa está incorrecto, repite el proceso" << std::endl;
+                              std::cout << "El nombre de la capa esta incorrecto, repite el proceso" << std::endl;
                               system("pause");
                            }
                            break;
@@ -288,7 +288,7 @@ int main(int argc, char const *argv[])
                                  else
                                  {
                                     free(nuevoFiltro);
-                                    std::cout << "El nombre de la capa está incorrecto, repite el proceso" << std::endl;
+                                    std::cout << "El nombre de la capa esta incorrecto, repite el proceso" << std::endl;
                                     system("pause");
                                  }
                                  break;
@@ -333,7 +333,7 @@ int main(int argc, char const *argv[])
                                  else
                                  {
                                     free(nuevoFiltro);
-                                    std::cout << "El nombre de la capa está incorrecto, repite el proceso" << std::endl;
+                                    std::cout << "El nombre de la capa esta incorrecto, repite el proceso" << std::endl;
                                     system("pause");
                                  }
                                  break;
@@ -378,7 +378,7 @@ int main(int argc, char const *argv[])
                                  else
                                  {
                                     free(nuevoFiltro);
-                                    std::cout << "El nombre de la capa está incorrecto, repite el proceso" << std::endl;
+                                    std::cout << "El nombre de la capa esta incorrecto, repite el proceso" << std::endl;
                                     system("pause");
                                  }
                                  break;
@@ -465,9 +465,12 @@ int main(int argc, char const *argv[])
                op = 0;
                while (op != 3)
                {
+                  print("\t###  EDICION MANUAL  ###");
                   print("1. Imagen Original");
                   print("2. Filtros");
                   print("3. Salir");
+                  std::cout << "Elige una opcion: ";
+                  fflush(stdin);
                   std::cin >> op;
                   switch (op)
                   {
@@ -484,7 +487,7 @@ int main(int argc, char const *argv[])
                         print("Ingrese el valor de la coordenada X: ");
                         fflush(stdin);
                         std::cin >> x;
-                        print("ingrese el valor de la coordenada Y: ");
+                        print("Ingrese el valor de la coordenada Y: ");
                         fflush(stdin);
                         std::cin >> y;
                         print("Ingrese un valor para Rojo (0-255): ");
@@ -536,7 +539,14 @@ int main(int argc, char const *argv[])
                            print("Ingrese un valor para Azul (0-255): ");
                            fflush(stdin);
                            std::cin >> azul;
-                           modificar(x, y, capaGraficada, rojo, azul, verde);
+                           if (x > 0 && y > 0 && rojo >= 0 && rojo <= 255 && verde >= 0 && verde <= 255 && azul >= 0 && azul <= 255)
+                           {
+                              modificar(x, y, capaGraficada, rojo, azul, verde);
+                           }else{
+                              print("Verifica que las coordenadas y los colores sean valores mayores a 0");
+                              print("Verifica que los colores tengan un valor menor o igual a 255");
+                              system("pause");
+                           }
                         }
                         else
                         {
@@ -720,6 +730,7 @@ int main(int argc, char const *argv[])
                            std::cout << "\tSELECTOR DE IMAGENES" << std::endl;
                            desplegarImagenes(raiz);
                            std::cout << "\tINGRESA EL NOMBRE EXACTO DE LA IMAGEN: ";
+                           fflush(stdin);
                            std::cin >> nombreArchivo;
                            reporteMatrices = obtenerCopia(raiz, nombreArchivo);
                            if (reporteMatrices != NULL)
@@ -794,11 +805,11 @@ int main(int argc, char const *argv[])
                            while (op != 4)
                            {
                               system("cls");
-                              std::cout << "\tMENU DE TRANSVERSAS" << std::endl;
-                              std::cout << "1. Transversa En Orden" << std::endl;
-                              std::cout << "2. Transversa Post Orden" << std::endl;
-                              std::cout << "3. Transversa Pre Orden" << std::endl;
-                              std::cout << "4. Salir" << std::endl;
+                              std::cout << "\t\t###  MENU DE TRANSVERSAS  ###" << std::endl;
+                              std::cout << "\t1. Transversa En Orden" << std::endl;
+                              std::cout << "\t2. Transversa Post Orden" << std::endl;
+                              std::cout << "\t3. Transversa Pre Orden" << std::endl;
+                              std::cout << "\t4. Salir" << std::endl;
                               fflush(stdin);
                               std::cin >> op;
                               switch (op)
@@ -855,6 +866,7 @@ int main(int argc, char const *argv[])
                         while (op != 3)
                         {
                            system("cls");
+                           print("\t###  TIPO DE REPORTE  ###");
                            std::cout << "1. Reporte Todos los Filtros Aplicados" << std::endl;
                            std::cout << "2. Reporte de filtro Invidual" << std::endl;
                            std::cout << "3. Regresar....\n";
@@ -879,9 +891,11 @@ int main(int argc, char const *argv[])
                                  while (op != 3)
                                  {
                                     system("cls");
+                                    print("\t###  MODO DE REPORTE DE FILTRO  ###");
                                     std::cout << "1. Imagen Completa" << std::endl;
                                     std::cout << "2. Por capas" << std::endl;
                                     std::cout << "3. Salir" << std::endl;
+                                    std::cout << "Escoge una opcion: ";
                                     fflush(stdin);
                                     std::cin >> op;
                                     switch (op)
@@ -971,7 +985,7 @@ int main(int argc, char const *argv[])
 
 void mensajeError()
 {
-   std::cout << "\t\nOpcion Incorrecta, Elige una opcion del menu.\n";
+   std::cout << "\t\nHa ocurrido una operacion incorrecta\n";
    std::cin.clear();
    std::cin.ignore(1000, '\n');
    system("pause");

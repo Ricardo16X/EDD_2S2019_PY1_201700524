@@ -157,6 +157,7 @@ void registrarFiltro(filtros *&raiz, cubo *nuevo, std::string modo)
 
 void graficarFiltros(filtros *raiz)
 {
+    std::cout << "\n...GENERANDO REPORTE DE FILTROS" << std::endl;
     filtros *temp = raiz;
     std::string dot = "digraph G{\n";
     dot += "rankdir = LR;\n";
