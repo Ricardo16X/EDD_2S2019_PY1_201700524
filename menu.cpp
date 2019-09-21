@@ -197,6 +197,7 @@ int main(int argc, char const *argv[])
                      while (op != 3)
                      {
                         menu_opcionFiltro();
+                        std::cout << "Elige una opcion: ";
                         fflush(stdin);
                         std::cin >> op;
                         switch (op)
@@ -238,6 +239,8 @@ int main(int argc, char const *argv[])
                               std::cout << "El nombre de la capa esta incorrecto, repite el proceso" << std::endl;
                               system("pause");
                            }
+                           break;
+                           case 3:
                            break;
                         default:
                            mensajeError();
@@ -810,6 +813,7 @@ int main(int argc, char const *argv[])
                               std::cout << "\t2. Transversa Post Orden" << std::endl;
                               std::cout << "\t3. Transversa Pre Orden" << std::endl;
                               std::cout << "\t4. Salir" << std::endl;
+                              std::cout << "Elige una opcion: ";
                               fflush(stdin);
                               std::cin >> op;
                               switch (op)
