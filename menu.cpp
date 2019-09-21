@@ -53,6 +53,7 @@ int main(int argc, char const *argv[])
       menuINIT();
       try
       {
+         std::cout << "\nESCOGE UNA OPCION: ";
          fflush(stdin);
          scanf("%i", &op);
          switch (op)
@@ -90,7 +91,7 @@ int main(int argc, char const *argv[])
             {
                system("cls");
                elemento_paraTrabajo = 0;
-               std::cout << "\tSELECTOR DE IMAGENES" << std::endl;
+               std::cout << "\t\t###  SELECTOR DE IMAGENES  ###" << std::endl;
                desplegarImagenes(raiz);
                std::cout << "\tINGRESA EL NOMBRE EXACTO DE LA IMAGEN: ";
                fflush(stdin);
@@ -101,12 +102,12 @@ int main(int argc, char const *argv[])
                if (elemento_paraTrabajo != NULL)
                {
                   std::cout << std::endl
-                            << "Se ha elegido la imagen: " << elemento_paraTrabajo->nombre << std::endl;
-                  std::cout << "Informacion de Imagen: " << std::endl;
-                  std::cout << "ANCHO IMAGEN : " << elemento_paraTrabajo->wImg << std::endl;
-                  std::cout << "ALTO IMAGEN : " << elemento_paraTrabajo->hImg << std::endl;
-                  std::cout << "ANCHO PIXEL : " << elemento_paraTrabajo->wPix << std::endl;
-                  std::cout << "ALTO PIXEL : " << elemento_paraTrabajo->hPix << std::endl
+                            << "\tSe ha elegido la imagen: " << elemento_paraTrabajo->nombre << std::endl;
+                  std::cout << "\tInformacion de Imagen: " << std::endl;
+                  std::cout << "\tANCHO IMAGEN : " << elemento_paraTrabajo->wImg << std::endl;
+                  std::cout << "\tALTO IMAGEN : " << elemento_paraTrabajo->hImg << std::endl;
+                  std::cout << "\tANCHO PIXEL : " << elemento_paraTrabajo->wPix << std::endl;
+                  std::cout << "\tALTO PIXEL : " << elemento_paraTrabajo->hPix << std::endl
                             << std::endl;
                   if (raizFiltros != NULL)
                   {
@@ -118,20 +119,20 @@ int main(int argc, char const *argv[])
                else
                {
                   // UY UN ERRORCITO
-                  std::cout << "\n***HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN&&&\n";
-                  std::cout << "\n***VERIFICA EL NOMBRE DE LA IMAGEN QUE SEA CORRECTO...&&&\n";
+                  std::cout << "\n###  HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN  ###\n";
+                  std::cout << "\n###  VERIFICA EL NOMBRE DE LA IMAGEN QUE SEA CORRECTO...  ###\n";
                }
             }
             system("pause");
             break;
-         case 3: // Filtros Collage & Mosaico TODO
+         case 3: // Filtros TODO
             if (elemento_paraTrabajo != NULL)
             {
                op = 0;
                while (op != 5)
                {
                   menuFILTROS();
-                  std::cout << "SELECCIONA UN FILTRO: ";
+                  std::cout << "\tSELECCIONA UN FILTRO: ";
                   fflush(stdin);
                   std::cin >> op;
                   switch (op)
@@ -141,7 +142,7 @@ int main(int argc, char const *argv[])
                      while (op != 3)
                      {
                         menu_opcionFiltro();
-                        std::cout << "SELECCIONA UN FILTRO: ";
+                        std::cout << "\tSELECCIONA UN FILTRO: ";
                         fflush(stdin);
                         std::cin >> op;
                         switch (op)
@@ -159,7 +160,7 @@ int main(int argc, char const *argv[])
                               copia = copia->siguiente;
                            }
                            numeroFiltroCreado++;
-                           registrarFiltro(raizFiltros, nuevoFiltro, "___NEGATIVO_" + std::to_string(numeroFiltroCreado) + "_");
+                           registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":Negativo");
                            break;
                         case 2: // FILTRO NEGATIVO POR CAPAS
                            nuevoFiltro = new cubo();
@@ -174,12 +175,12 @@ int main(int argc, char const *argv[])
                            {
                               numeroFiltroCreado++;
                               filtroNegativo(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
-                              registrarFiltro(raizFiltros, nuevoFiltro, "___NEGATIVO_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                              registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":Negativo:" + nombreCapa);
                            }
                            else
                            {
                               free(nuevoFiltro);
-                              std::cout << "El nombre de la capa está incorrecto, repite el proceso" << std::endl;
+                              std::cout << "El nombre de la capa está incorrecto, repite el proceso..." << std::endl;
                               system("pause");
                            }
                            break;
@@ -214,7 +215,7 @@ int main(int argc, char const *argv[])
                               copia = copia->siguiente;
                            }
                            numeroFiltroCreado++;
-                           registrarFiltro(raizFiltros, nuevoFiltro, "___GRAYSCALE_" + std::to_string(numeroFiltroCreado) + "_");
+                           registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":Grayscale");
                            break;
                         case 2:
                            /*Filtro grayscale por capas*/
@@ -229,7 +230,7 @@ int main(int argc, char const *argv[])
                            {
                               numeroFiltroCreado++;
                               filtroGrayScale(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
-                              registrarFiltro(raizFiltros, nuevoFiltro, "___GRAYSCALE_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                              registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":Grayscale:" + nombreCapa);
                            }
                            else
                            {
@@ -268,7 +269,7 @@ int main(int argc, char const *argv[])
                                  nuevoFiltro = new cubo();
                                  filtro_ejeX(elemento_paraTrabajo, nuevoFiltro);
                                  numeroFiltroCreado++;
-                                 registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_EJE_X_" + std::to_string(numeroFiltroCreado));
+                                 registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":XMirror" );
                                  break;
                               case 2: // Mirror Eje X a capa individual
                                  nuevoFiltro = new cubo();
@@ -282,7 +283,7 @@ int main(int argc, char const *argv[])
                                  {
                                     numeroFiltroCreado++;
                                     filtro_ejeX_capa(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
-                                    registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_EJE_X_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                                    registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":XMirror:" + nombreCapa );
                                  }
                                  else
                                  {
@@ -313,7 +314,7 @@ int main(int argc, char const *argv[])
                                  nuevoFiltro = new cubo();
                                  filtro_ejeY(elemento_paraTrabajo, nuevoFiltro);
                                  numeroFiltroCreado++;
-                                 registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_EJE_Y_" + std::to_string(numeroFiltroCreado));
+                                 registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":YMirror");
                                  break;
                               case 2: // Mirror Eje Y a capa
                                  nuevoFiltro = new cubo();
@@ -327,7 +328,7 @@ int main(int argc, char const *argv[])
                                  {
                                     numeroFiltroCreado++;
                                     filtro_ejeY_capa(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
-                                    registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_EJE_Y_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                                    registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":YMirror:" + nombreCapa);
                                  }
                                  else
                                  {
@@ -358,7 +359,7 @@ int main(int argc, char const *argv[])
                                  nuevoFiltro = new cubo();
                                  mirror_EjeX_EjeY(elemento_paraTrabajo, nuevoFiltro);
                                  numeroFiltroCreado++;
-                                 registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_" + std::to_string(numeroFiltroCreado));
+                                 registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) +  ":Mirror");
                                  break;
                               case 2: // Mirror a capa n
                                  nuevoFiltro = new cubo();
@@ -372,7 +373,7 @@ int main(int argc, char const *argv[])
                                  {
                                     numeroFiltroCreado++;
                                     mirror_capa(obtenerCapa(elemento_paraTrabajo, nombreCapa), obtenerCapa(nuevoFiltro, nombreCapa));
-                                    registrarFiltro(raizFiltros, nuevoFiltro, "___MIRROR_" + nombreCapa + "_" + std::to_string(numeroFiltroCreado) + "_");
+                                    registrarFiltro(raizFiltros, nuevoFiltro, std::to_string(numeroFiltroCreado) + ":Mirror:" + nombreCapa);
                                  }
                                  else
                                  {
@@ -420,13 +421,17 @@ int main(int argc, char const *argv[])
                         {
                            copiarCubo(elemento_paraTrabajo, nuevoFiltro);
                            numeroFiltroCreado++;
+                           registrarFiltro(raizFiltros, nuevoFiltro, "\t" + std::to_string(numeroFiltroCreado) + ". Collage");
                         }
-                        else
+                        else if(x > 1 && y > 1)
                         {
                            collage(elemento_paraTrabajo, nuevoFiltro, x, y);
                            numeroFiltroCreado++;
+                           registrarFiltro(raizFiltros, nuevoFiltro, "\t" + std::to_string(numeroFiltroCreado) + ". Collage");
+                        }else{
+                           print("Solo acepto valores mayores a 0");
+                           system("pause");
                         }
-                        registrarFiltro(raizFiltros, nuevoFiltro, "\t" + std::to_string(numeroFiltroCreado) + ". Collage");
                      }
                      catch (const std::exception &e)
                      {
@@ -434,6 +439,8 @@ int main(int argc, char const *argv[])
                         mensajeError();
                      }
                      break;
+                  case 5:
+                  break;
                   default:
                      mensajeError();
                      break;
@@ -442,9 +449,9 @@ int main(int argc, char const *argv[])
             }
             else
             {
-               std::cout << "**SIN IMAGEN CARGADA&&" << std::endl;
+               std::cout << "###  SIN IMAGEN CARGADA  ###" << std::endl;
+               system("pause");
             }
-            system("pause");
             break;
          case 4: // Edicion Manual
             system("cls");
@@ -460,6 +467,7 @@ int main(int argc, char const *argv[])
                {
                   print("1. Imagen Original");
                   print("2. Filtros");
+                  print("3. Salir");
                   std::cin >> op;
                   switch (op)
                   {
@@ -699,8 +707,8 @@ int main(int argc, char const *argv[])
                            else
                            {
                               // UY UN ERRORCITO
-                              std::cout << "\n***HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN&&&\n";
-                              std::cout << "\n***VERIFICA EL NOMBRE DE LA IMAGEN QUE SEA CORRECTO...&&&\n";
+                              std::cout << "\n###  HA OCURRIDO UN ERROR EN LA RECUPERACION DE LA IMAGEN  ###\n";
+                              std::cout << "\n###  VERIFICA EL NOMBRE DE LA IMAGEN QUE SEA CORRECTO...  ###\n";
                            }
                         }
                         break;

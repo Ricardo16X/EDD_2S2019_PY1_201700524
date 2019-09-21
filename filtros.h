@@ -202,7 +202,7 @@ void mostrarFiltros(filtros *&raizFiltro)
         filtros *temp = raizFiltro;
         do
         {
-            std::cout << "\t* " << temp->nombre << std::endl;
+            std::cout << "\t\t" << temp->nombre << std::endl;
             temp = temp->siguiente;
         } while (temp != raizFiltro);
     }
@@ -599,29 +599,34 @@ void collage(cubo *original, cubo *copia, int rep_columnas, int rep_filas)
     capa *copia_capa = original->primerCapa;
     cabecera *columna_copia = 0;
     elementoCabecera *fila_copia = 0;
-
-    /*REDEFINIENDO DIMENSIONES A IMAGEN DE COLLAGE*/
-    if (original->wImg * original->wPix * rep_columnas > 1500)
+    
+    if (rep_columnas > rep_filas)
     {
-        // Redimensionando alto y ancho, para hacerlo visible
-        // en pantalla.
-        copia->wImg = (int)(original->wImg*rep_columnas);
-        copia->hImg = (int)(original->hImg*rep_filas);
-        copia->wPix = (int)(original->wPix/rep_columnas);
-        copia->hPix = (int)(original->hPix/rep_filas);
+        copia->wImg = (int)(original->wImg * rep_columnas);
+        copia->hImg = (int)(original->hImg * rep_filas);
+        copia->wPix = (int)(original->wPix / rep_columnas);
+        copia->hPix = (int)(original->hPix / rep_columnas);
+        copia->nombre = original->nombre;
+        copia->ruta = original->ruta;
+    }
+    else if (rep_columnas < rep_filas)
+    {
+        copia->wImg = (int)(original->wImg * rep_columnas);
+        copia->hImg = (int)(original->hImg * rep_filas);
+        copia->wPix = (int)(original->wPix / rep_filas);
+        copia->hPix = (int)(original->hPix / rep_filas);
         copia->nombre = original->nombre;
         copia->ruta = original->ruta;
     }
     else
     {
-        copia->wImg = original->wImg * rep_columnas;
-        copia->hImg = original->hImg * rep_filas;
-        copia->wPix = original->wPix;
-        copia->hPix = original->hPix;
+        copia->wImg = (int)(original->wImg * rep_columnas);
+        copia->hImg = (int)(original->hImg * rep_filas);
+        copia->wPix = (int)(original->wPix / rep_columnas);
+        copia->hPix = (int)(original->hPix / rep_filas);
         copia->nombre = original->nombre;
         copia->ruta = original->ruta;
     }
-
     /*Estas variables solo me servirán para poder incrementar "manualmente"
     El numero de fila de la nueva fila en el cubo copia.*/
     int index_fila = 0, index_columna = 0;

@@ -61,14 +61,17 @@ void generarImagen(cubo *imagen)
     css += "\tfloat: left;\n";
     css += "}\n";
 
-    capa* capaTemporal = imagen->primerCapa;
-    cabecera* columna = 0;
-    elementoCabecera* fila = 0;
+    capa *capaTemporal = imagen->primerCapa;
+    cabecera *columna = 0;
+    elementoCabecera *fila = 0;
+
+    std::string nuevo_color = "";
+    std::string sig_color = "";
 
     int row = 1, column = 1;
     while (capaTemporal != NULL)
     {
-        css += "\n/**********"+ capaTemporal->nombreCapa  +"**********/\n\n";
+        css += "\n/**********" + capaTemporal->nombreCapa + "**********/\n\n";
         columna = capaTemporal->primer_Cabecera;
         column = 1;
         while (columna != NULL)
@@ -77,12 +80,29 @@ void generarImagen(cubo *imagen)
             row = 1;
             while (fila != NULL)
             {
-                if (!((fila->color.compare("x") == 0)||(fila->color.compare("X") == 0)||(fila->color.compare("") == 0)))
+                if (!((fila->color.compare("x") == 0) || (fila->color.compare("X") == 0) || (fila->color.compare("") == 0)))
                 {
-                    css += ".pixel:nth-child(" + std::to_string(linealizacion(row, column, imagen->wImg)) + ")\n";
-                    css += "{\n";
-                    css += "\tbackground-color: rgb(" + rgb(fila->color) + ");\n";
-                    css += "}\n";
+                    /*Voy a comparar el color anterior, con el nuevo color
+                    Si ambos son iguales, solo insertaré una ,
+                    
+                    Si ambos son distintos, agregaré la línea ya puesta anteriormente.*/
+                    nuevo_color = fila->color;
+                    if(fila->siguiente != NULL){
+                        sig_color = fila->siguiente->color;
+                    }else{
+                        sig_color = nuevo_color;
+                    }
+                    if (nuevo_color == sig_color)
+                    {
+                        css += ".pixel:nth-child(" + std::to_string(linealizacion(row, column, imagen->wImg)) + "),\n";
+                    }
+                    else
+                    {
+                        css += ".pixel:nth-child(" + std::to_string(linealizacion(row, column, imagen->wImg)) + ")\n";
+                        css += "{\n";
+                        css += "\tbackground-color: rgb(" + rgb(fila->color) + ");\n";
+                        css += "}\n";
+                    }
                 }
                 row++;
                 fila = fila->siguiente;
@@ -96,9 +116,9 @@ void generarImagen(cubo *imagen)
     std::ofstream gen_css(ruta + "\\" + imagen->nombre + ".css");
     gen_css << css;
     gen_css.close();
-    
+
     std::string ruta_fin = ruta + "\\" + imagen->nombre + ".html";
-    const char* op_html = ruta_fin.c_str();
+    const char *op_html = ruta_fin.c_str();
     system(op_html);
 }
 
@@ -107,7 +127,8 @@ int linealizacion(int fila, int columna, int ancho)
     return (((fila - 1) * ancho) + columna);
 }
 
-std::string rgb(std::string rgb_pre){
+std::string rgb(std::string rgb_pre)
+{
     std::replace(rgb_pre.begin(), rgb_pre.end(), '-', ',');
     return rgb_pre;
 }
