@@ -12,53 +12,67 @@ std::fstream arch_config;
 std::fstream arch_capa;
 
 /**DECLARACION DE FUNCIONES EXTERNAS**/
-void cargarConfig(std::string rutaConfig, cubo* nuevaImagen);
-void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo* nuevaImagen, int posCapa);
+void cargarConfig(std::string rutaConfig, cubo *nuevaImagen);
+void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo *nuevaImagen, int posCapa);
 
-ARBOL leerArchivo(std::string ruta) {
+ARBOL leerArchivo(std::string ruta)
+{
    /*Aqui tengo que "configurar" la ruta de inicio para darle "validez"*/
    std::string rutaInit = "csv\\" + ruta + "\\" + ruta + ".csv";
-   arch_init.open(rutaInit,std::ios::in);
-   if(arch_init.is_open()) {
+   arch_init.open(rutaInit, std::ios::in);
+   if (arch_init.is_open())
+   {
       std::string layer;
       std::string file;
       // Leer� el archivo inicial
       int numArchivo = 0;
 
-      cubo* nuevaImagen = new cubo(); // Creaci�n de un nuevo cubo, que ser� el que se retornar�.
+      cubo *nuevaImagen = new cubo(); // Creaci�n de un nuevo cubo, que ser� el que se retornar�.
 
-      while(arch_init.good()) {
-         std::getline(arch_init,layer,',');
-         std::getline(arch_init,file,'\n');
+      while (arch_init.good())
+      {
+         if (!arch_init.eof())
+         {
+            std::getline(arch_init, layer, ',');
+            std::getline(arch_init, file, '\n');
 
-         if (numArchivo > 0) {
-            int posLayer = std::stoi(layer);
-            if (posLayer == 0) {
-               nuevaImagen->nombre = ruta;
-               nuevaImagen->ruta = "csv\\" + ruta + "\\";
-               rutaInit = "csv\\" + ruta + "\\" + file;
-               cargarConfig(rutaInit, nuevaImagen);
-            } else if(posLayer > 0) {
-               /*Esto me dice que el numero de archivo es mayor a 1 por lo
+            if (numArchivo > 0)
+            {
+               int posLayer = std::stoi(layer);
+               if (posLayer == 0)
+               {
+                  nuevaImagen->nombre = ruta;
+                  nuevaImagen->ruta = "csv\\" + ruta + "\\";
+                  rutaInit = "csv\\" + ruta + "\\" + file;
+                  cargarConfig(rutaInit, nuevaImagen);
+               }
+               else if (posLayer > 0)
+               {
+                  /*Esto me dice que el numero de archivo es mayor a 1 por lo
                tanto son archivos de capas...*/
-               rutaInit = "csv\\" + ruta + "\\" + file;
-               // El nombre de la capa ser� la del archivo sin su extension .csv
-               cargarCapa(rutaInit, file.substr(0,file.length() - 4), nuevaImagen, posLayer);
+                  rutaInit = "csv\\" + ruta + "\\" + file;
+                  // El nombre de la capa ser� la del archivo sin su extension .csv
+                  cargarCapa(rutaInit, file.substr(0, file.length() - 4), nuevaImagen, posLayer);
+               }
             }
+            numArchivo++;
          }
-         numArchivo++;
       }
       arch_init.close();
       return nuevaImagen;
-   } else {
+   }
+   else
+   {
       std::cout << "No hay ningun archivo/carpeta con este nombre = " + ruta << std::endl;
       return NULL;
    }
 }
 
-void cargarConfig(std::string rutaConfig, cubo* nuevaImagen) {
-   arch_config.open(rutaConfig,std::ios::in);
-   if(arch_config.is_open()) {
+void cargarConfig(std::string rutaConfig, cubo *nuevaImagen)
+{
+   arch_config.open(rutaConfig, std::ios::in);
+   if (arch_config.is_open())
+   {
       // Configuracion contiene 2 columnas
       /* Config, Value
       */
@@ -66,31 +80,42 @@ void cargarConfig(std::string rutaConfig, cubo* nuevaImagen) {
       std::string value;
       /*Fin de esas variables*/
 
-      while(arch_config.good()) {
+      while (arch_config.good())
+      {
          std::getline(arch_config, config, ',');
-         std::getline(arch_config,value,'\n');
+         std::getline(arch_config, value, '\n');
 
-
-         if(config == "image_width") {
+         if (config == "image_width")
+         {
             nuevaImagen->wImg = std::stoi(value);
-         } else if(config == "image_height") {
+         }
+         else if (config == "image_height")
+         {
             nuevaImagen->hImg = std::stoi(value);
-         } else if(config == "pixel_width") {
+         }
+         else if (config == "pixel_width")
+         {
             nuevaImagen->wPix = std::stoi(value);
-         } else if(config == "pixel_height") {
+         }
+         else if (config == "pixel_height")
+         {
             nuevaImagen->hPix = std::stoi(value);
          }
       }
-   } else {
+   }
+   else
+   {
       std::cout << "Error al leer el archivo " + rutaConfig;
    }
    arch_config.close();
 }
 
-void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo* nuevaImagen, int posCapa) {
-   arch_capa.open(rutaCapa,std::ios::in);
-   if(arch_capa.is_open()) {
-      capa* nuevaCapa = new capa();
+void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo *nuevaImagen, int posCapa)
+{
+   arch_capa.open(rutaCapa, std::ios::in);
+   if (arch_capa.is_open())
+   {
+      capa *nuevaCapa = new capa();
       nuevaCapa->nombreCapa = nombreCapa;
       nuevaCapa->numeroCapa = posCapa;
       // Coordenadas Iniciales de la matriz.
@@ -105,10 +130,12 @@ void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo* nuevaImagen,
       std::string color = "";
 
       /*Inicio del primer ciclo while*/
-      while(std::getline(arch_capa,color)) {
+      while (std::getline(arch_capa, color))
+      {
          std::stringstream strstr(color);
          std::string w_color = "";
-         while(std::getline(strstr,w_color,',')) {
+         while (std::getline(strstr, w_color, ','))
+         {
             cabecera *nuevaCabecera = new cabecera();
             nuevaCabecera->column = columna;
             agregarCabecera(nuevaCapa, nuevaCabecera);
@@ -122,22 +149,26 @@ void cargarCapa(std::string rutaCapa, std::string nombreCapa, cubo* nuevaImagen,
       arch_capa.close();
       color = "";
       arch_capa.open(rutaCapa, std::ios::in);
-      while(std::getline(arch_capa,color)) {
+      while (std::getline(arch_capa, color))
+      {
 
          std::stringstream strstr(color);
          std::string w_color = "";
 
-         while(std::getline(strstr,w_color,',')) {
-            elementoCabecera* colorRGB = new elementoCabecera(w_color,fila);
-            agregarFila(obtenerCabecera(nuevaCapa, columna),colorRGB);
+         while (std::getline(strstr, w_color, ','))
+         {
+            elementoCabecera *colorRGB = new elementoCabecera(w_color, fila);
+            agregarFila(obtenerCabecera(nuevaCapa, columna), colorRGB);
             columna++;
          }
          fila++;
          columna = 1;
       }
       arch_capa.close();
-      agregarCapa(nuevaImagen,nuevaCapa);
-   } else {
+      agregarCapa(nuevaImagen, nuevaCapa);
+   }
+   else
+   {
       std::cout << "No se pudo cargar la capa " + rutaCapa;
    }
 }

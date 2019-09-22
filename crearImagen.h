@@ -43,7 +43,7 @@ void generarImagen(cubo *imagen)
 
     /*CREACION ARCHIVO CSS*/
     std::string css = "body{\n";
-    css += "\tbackground: #333;\n";
+    css += "\tbackground: #fff;\n";
     css += "\theight: 100vh;\n";
     css += "\tdisplay: flex;\n";
     css += "\tjustify-content: center;\n";
@@ -90,7 +90,7 @@ void generarImagen(cubo *imagen)
                     if(fila->siguiente != NULL){
                         sig_color = fila->siguiente->color;
                     }else{
-                        sig_color = nuevo_color;
+                        sig_color = "x";
                     }
                     if (nuevo_color == sig_color)
                     {

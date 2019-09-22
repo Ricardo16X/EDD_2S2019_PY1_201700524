@@ -699,4 +699,14 @@ void modificar(int columna, int fila, capa *&imagen, int rojo, int verde, int az
     std::cout << "Quiza el numero de columna es mayor al numero de columnas de la capa: " << std::endl;
 }
 
+
+void mosaico(cubo* original, cubo* copia, int ancho, int alto){
+    // Las variables ancho y alto, me indicarán el tamaño total de todo el mosaico.
+    // La idea principal es ir llenando imagen por imagen de 1 pixel tipo collage
+    // Luego el numero de nodos, lo pinto todo
+    // para luego ir a la imagen original, obtener su color original del pixel correspondiente.
+    // y pintar solo ese cuadro del color original. con sus imagenes pequeñas respectivamente.
+    
+}
+
 #endif // FILTROS_H_INCLUDED
